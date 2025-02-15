@@ -10,69 +10,21 @@ import {
 } from '@/components/icons';
 import { toast } from 'sonner';
 import { generateUUID } from '@/lib/utils';
-import {
-  Console,
-  ConsoleOutput,
-  ConsoleOutputContent,
-} from '@/components/console';
-
-const OUTPUT_HANDLERS = {
-  matplotlib: `
-    import io
-    import base64
-    from matplotlib import pyplot as plt
-
-    # Clear any existing plots
-    plt.clf()
-    plt.close('all')
-
-    # Switch to agg backend
-    plt.switch_backend('agg')
-
-    def setup_matplotlib_output():
-        def custom_show():
-            if plt.gcf().get_size_inches().prod() * plt.gcf().dpi ** 2 > 25_000_000:
-                print("Warning: Plot size too large, reducing quality")
-                plt.gcf().set_dpi(100)
-
-            png_buf = io.BytesIO()
-            plt.savefig(png_buf, format='png')
-            png_buf.seek(0)
-            png_base64 = base64.b64encode(png_buf.read()).decode('utf-8')
-            print(f'data:image/png;base64,{png_base64}')
-            png_buf.close()
-
-            plt.clf()
-            plt.close('all')
-
-        plt.show = custom_show
-  `,
-  basic: `
-    # Basic output capture setup
-  `,
-};
-
-function detectRequiredHandlers(code: string): string[] {
-  const handlers: string[] = ['basic'];
-
-  if (code.includes('matplotlib') || code.includes('plt.')) {
-    handlers.push('matplotlib');
-  }
-
-  return handlers;
-}
+// import { RunFrame } from '@tscircuit/runframe/runner';
 
 interface Metadata {
-  outputs: Array<ConsoleOutput>;
+  // Instead of a list of console outputs, we now store the circuit code
+  // to be rendered in the preview.
+  circuitPreview?: string;
 }
 
 export const codeBlock = new Block<'code', Metadata>({
   kind: 'code',
   description:
-    'Useful for code generation; Code execution is only available for python code.',
+    'Useful for code generation; Code execution is now replaced with a tscircuit runner that converts React code into circuits.',
   initialize: async ({ setMetadata }) => {
     setMetadata({
-      outputs: [],
+      circuitPreview: '',
     });
   },
   onStreamPart: ({ streamPart, setBlock }) => {
@@ -96,17 +48,11 @@ export const codeBlock = new Block<'code', Metadata>({
         <div className="px-1">
           <CodeEditor {...props} />
         </div>
-
-        {metadata?.outputs && (
-          <Console
-            consoleOutputs={metadata.outputs}
-            setConsoleOutputs={() => {
-              setMetadata({
-                ...metadata,
-                outputs: [],
-              });
-            }}
-          />
+        {/* Render the tscircuit runner preview if circuit code exists */}
+        {metadata?.circuitPreview && (
+          <div className="mt-4">
+            <iframe src="https://runframe.tscircuit.com/iframe.html" />
+          </div>
         )}
       </>
     );
@@ -115,97 +61,14 @@ export const codeBlock = new Block<'code', Metadata>({
     {
       icon: <PlayIcon size={18} />,
       label: 'Run',
-      description: 'Execute code',
+      description: 'Execute circuit code using tscircuit runner',
       onClick: async ({ content, setMetadata }) => {
-        const runId = generateUUID();
-        const outputContent: Array<ConsoleOutputContent> = [];
-
+        // Instead of executing Python code, simply store the code
+        // so that the RunFrame component can render it.
         setMetadata((metadata) => ({
           ...metadata,
-          outputs: [
-            ...metadata.outputs,
-            {
-              id: runId,
-              contents: [],
-              status: 'in_progress',
-            },
-          ],
+          circuitPreview: content,
         }));
-
-        try {
-          // @ts-expect-error - loadPyodide is not defined
-          const currentPyodideInstance = await globalThis.loadPyodide({
-            indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.23.4/full/',
-          });
-
-          currentPyodideInstance.setStdout({
-            batched: (output: string) => {
-              outputContent.push({
-                type: output.startsWith('data:image/png;base64')
-                  ? 'image'
-                  : 'text',
-                value: output,
-              });
-            },
-          });
-
-          await currentPyodideInstance.loadPackagesFromImports(content, {
-            messageCallback: (message: string) => {
-              setMetadata((metadata) => ({
-                ...metadata,
-                outputs: [
-                  ...metadata.outputs.filter((output) => output.id !== runId),
-                  {
-                    id: runId,
-                    contents: [{ type: 'text', value: message }],
-                    status: 'loading_packages',
-                  },
-                ],
-              }));
-            },
-          });
-
-          const requiredHandlers = detectRequiredHandlers(content);
-          for (const handler of requiredHandlers) {
-            if (OUTPUT_HANDLERS[handler as keyof typeof OUTPUT_HANDLERS]) {
-              await currentPyodideInstance.runPythonAsync(
-                OUTPUT_HANDLERS[handler as keyof typeof OUTPUT_HANDLERS],
-              );
-
-              if (handler === 'matplotlib') {
-                await currentPyodideInstance.runPythonAsync(
-                  'setup_matplotlib_output()',
-                );
-              }
-            }
-          }
-
-          await currentPyodideInstance.runPythonAsync(content);
-
-          setMetadata((metadata) => ({
-            ...metadata,
-            outputs: [
-              ...metadata.outputs.filter((output) => output.id !== runId),
-              {
-                id: runId,
-                contents: outputContent,
-                status: 'completed',
-              },
-            ],
-          }));
-        } catch (error: any) {
-          setMetadata((metadata) => ({
-            ...metadata,
-            outputs: [
-              ...metadata.outputs.filter((output) => output.id !== runId),
-              {
-                id: runId,
-                contents: [{ type: 'text', value: error.message }],
-                status: 'failed',
-              },
-            ],
-          }));
-        }
       },
     },
     {
@@ -214,13 +77,7 @@ export const codeBlock = new Block<'code', Metadata>({
       onClick: ({ handleVersionChange }) => {
         handleVersionChange('prev');
       },
-      isDisabled: ({ currentVersionIndex }) => {
-        if (currentVersionIndex === 0) {
-          return true;
-        }
-
-        return false;
-      },
+      isDisabled: ({ currentVersionIndex }) => currentVersionIndex === 0,
     },
     {
       icon: <RedoIcon size={18} />,
@@ -228,13 +85,7 @@ export const codeBlock = new Block<'code', Metadata>({
       onClick: ({ handleVersionChange }) => {
         handleVersionChange('next');
       },
-      isDisabled: ({ isCurrentVersion }) => {
-        if (isCurrentVersion) {
-          return true;
-        }
-
-        return false;
-      },
+      isDisabled: ({ isCurrentVersion }) => isCurrentVersion,
     },
     {
       icon: <CopyIcon size={18} />,
