@@ -10,6 +10,9 @@ import {
 } from '@/components/icons';
 import { toast } from 'sonner';
 import { generateUUID } from '@/lib/utils';
+import {TscircuitIframe} from '@/components/TscircuitIframe';
+import {Dialog, DialogContent, DialogTitle} from '@radix-ui/react-dialog';
+import {BottomContentDrawer} from '@/components/bottom-content-drawer';
 // import { RunFrame } from '@tscircuit/runframe/runner';
 
 interface Metadata {
@@ -44,17 +47,23 @@ export const codeBlock = new Block<'code', Metadata>({
   },
   content: ({ metadata, setMetadata, ...props }) => {
     return (
-      <>
+      <div className="relative">
         <div className="px-1">
           <CodeEditor {...props} />
         </div>
         {/* Render the tscircuit runner preview if circuit code exists */}
         {metadata?.circuitPreview && (
-          <div className="mt-4">
-            <iframe src="https://runframe.tscircuit.com/iframe.html" />
-          </div>
+          <BottomContentDrawer openByDefault>
+              <TscircuitIframe
+                  fsMap={{
+                    "board.tsx": metadata.circuitPreview,
+                  'entrypoint.tsx': `import Board from "./board.tsx"\ncircuit.add(<Board />)`,
+                }}
+                  entrypoint="entrypoint.tsx"
+                />
+            </BottomContentDrawer>
         )}
-      </>
+      </div>
     );
   },
   actions: [

@@ -1,3 +1,4 @@
+// https://docs.tscircuit.com/guides/running-tscircuit-inside-an-iframe
 import { useEffect, useRef } from "react"
 
 export interface TscircuitIframeProps {
