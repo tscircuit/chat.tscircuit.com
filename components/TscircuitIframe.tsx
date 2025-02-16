@@ -1,5 +1,5 @@
 // https://docs.tscircuit.com/guides/running-tscircuit-inside-an-iframe
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 
 export interface TscircuitIframeProps {
   fsMap: Record<string, string>
@@ -8,10 +8,12 @@ export interface TscircuitIframeProps {
 
 export const TscircuitIframe = (runFrameProps: TscircuitIframeProps) => {
   const iframeRef = useRef<HTMLIFrameElement>(null)
+  const [isReady, setIsReady] = useState(false)
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.runframe_type === "runframe_ready_to_receive") {
+        setIsReady(true)
         iframeRef.current?.contentWindow?.postMessage(
           {
             runframe_type: "runframe_props_changed",
@@ -26,6 +28,16 @@ export const TscircuitIframe = (runFrameProps: TscircuitIframeProps) => {
     return () => window.removeEventListener("message", handleMessage)
   }, [])
 
+  useEffect(() => {
+    if (!iframeRef.current) return
+    if (!isReady) return
+    if (iframeRef.current.contentWindow) {
+      iframeRef.current.contentWindow.postMessage(
+        { runframe_type: "runframe_props_changed", runframe_props: runFrameProps },
+        "*"
+      )
+    }
+  }, [runFrameProps])
   return (
     <div>
       <iframe
