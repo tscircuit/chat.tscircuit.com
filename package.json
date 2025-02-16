@@ -1,7 +1,6 @@
 {
-  "name": "ai-chatbot",
+  "name": "tscircuit-chatbot",
   "version": "0.1.0",
-  "private": true,
   "scripts": {
     "dev": "next dev --turbo",
     "build": "tsx lib/db/migrate && next build",
