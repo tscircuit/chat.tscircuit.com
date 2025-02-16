@@ -63,8 +63,6 @@ export const codeBlock = new Block<'code', Metadata>({
       label: 'Run',
       description: 'Execute circuit code using tscircuit runner',
       onClick: async ({ content, setMetadata }) => {
-        // Instead of executing Python code, simply store the code
-        // so that the RunFrame component can render it.
         setMetadata((metadata) => ({
           ...metadata,
           circuitPreview: content,

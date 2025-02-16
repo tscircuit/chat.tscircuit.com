@@ -1,9 +1,12 @@
 import { myProvider } from "@/lib/ai/models";
-import { sheetPrompt, updateDocumentPrompt } from "@/lib/ai/prompts/prompts";
+import {  updateDocumentPrompt } from "@/lib/ai/prompts/prompts";
 import { createDocumentHandler } from "@/lib/blocks/server";
 import { streamObject } from "ai";
 import { z } from "zod";
 
+/**
+ * @deprecated
+ */
 export const sheetDocumentHandler = createDocumentHandler<"sheet">({
 	kind: "sheet",
 	onCreateDocument: async ({ title, dataStream }) => {
@@ -11,7 +14,7 @@ export const sheetDocumentHandler = createDocumentHandler<"sheet">({
 
 		const { fullStream } = streamObject({
 			model: myProvider.languageModel("block-model"),
-			system: sheetPrompt,
+			system: "",
 			prompt: title,
 			schema: z.object({
 				csv: z.string().describe("CSV data"),
