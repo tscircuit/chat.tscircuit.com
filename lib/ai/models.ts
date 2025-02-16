@@ -34,23 +34,13 @@ interface ChatModel {
 
 export const chatModels: Array<ChatModel> = [
 	{
-		id: "chat-model-small",
-		name: "Small model",
-		description: "Small model for fast, lightweight tasks",
-	},
-	{
-		id: "chat-model-large",
-		name: "Large model",
-		description: "Large model for complex, multi-step tasks",
-	},
-	{
-		id: "chat-model-reasoning",
-		name: "Reasoning model",
-		description: "Uses advanced reasoning",
-	},
-	{
 		id: "tscircuit-docs",
-		name: "tscircuit docs assistant",
-		description: "Smart assistant for questions about tscircuit",
+		name: "Circuit Engineer (small)",
+		description: "Small-model smart assistant for questions about tscircuit",
+	},
+	{
+		id: "tscircuit-docs-large",
+		name: "Circuit Engineer (large)",
+		description: "Large-model smart assistant for questions about tscircuit",
 	},
 ];
