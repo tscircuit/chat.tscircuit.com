@@ -12,7 +12,7 @@ import { fetcher, generateUUID } from '@/lib/utils';
 import { Block } from './block';
 import { MultimodalInput } from './multimodal-input';
 import { Messages } from './messages';
-import { VisibilityType } from './visibility-selector';
+import type { VisibilityType } from './visibility-selector';
 import { useBlockSelector } from '@/hooks/use-block';
 import { toast } from 'sonner';
 
@@ -66,7 +66,7 @@ export function Chat({
 
   return (
     <>
-      <div className="flex flex-col min-w-0 h-dvh bg-background">
+      <div className="flex flex-col w-full max-w-[100vw] h-dvh bg-background">
         <ChatHeader
           chatId={id}
           selectedModelId={selectedChatModel}
