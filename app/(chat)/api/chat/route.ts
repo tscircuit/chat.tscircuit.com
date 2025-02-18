@@ -61,6 +61,8 @@ export async function POST(request: Request) {
     messages: [{ ...userMessage, createdAt: new Date(), chatId: id }],
   })
 
+  console.log("selectedChatModel", selectedChatModel)
+
   return createDataStreamResponse({
     execute: (dataStream) => {
       const result = streamText({
@@ -71,10 +73,9 @@ export async function POST(request: Request) {
         }),
         messages: removeTextAttachments(messages),
         maxSteps: 5,
-        experimental_activeTools:
-          selectedChatModel === "chat-model-reasoning"
-            ? []
-            : ["createDocument", "updateDocument", "requestSuggestions"],
+        experimental_activeTools: selectedChatModel.includes("reasoning")
+          ? []
+          : ["createDocument", "updateDocument", "requestSuggestions"],
         experimental_transform: smoothStream({ chunking: "word" }),
         experimental_generateMessageId: generateUUID,
         tools: {

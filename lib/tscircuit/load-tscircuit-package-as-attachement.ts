@@ -50,9 +50,14 @@ export const loadTscircuitPackageAsAttachment = async (
       (fi) => fi.file_path.endsWith(".tsx") || fi.file_path.endsWith(".ts"),
     )
 
-  let promptSnippet = `---\nModule: "@tsci/${packageName.replace("/", ".")}"`
+  let promptSnippet = `---\nModule: "@tsci/${packageName.replace("/", ".")}"\n---\n`
   for (const file of sourceFiles) {
-    promptSnippet += [`// ${file.file_path}`, file.content_text].join("\n")
+    promptSnippet += [
+      "```tsx",
+      `// ${file.file_path}`,
+      file.content_text,
+      "```",
+    ].join("\n")
   }
 
   return {

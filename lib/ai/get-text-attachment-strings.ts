@@ -1,6 +1,6 @@
 import { Message } from "ai"
 
-export const getTextAttachmentStrings = (messages: Message[]) => {
+export const getTextAttachmentStrings = (messages: Message[]): string[] => {
   return messages
     .flatMap((message) => message.experimental_attachments)
     .filter((attachment) => attachment?.contentType === "text/plain")
@@ -9,5 +9,5 @@ export const getTextAttachmentStrings = (messages: Message[]) => {
       const decoded = decodeURIComponent(attachment.url.split(",")[1])
       return decoded
     })
-    .filter(Boolean)
+    .filter((str) => str !== null)
 }

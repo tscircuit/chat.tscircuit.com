@@ -18,8 +18,9 @@
     "download:docs": "repomix --remote tscircuit/docs --include '**/*.md,**/*.mdx' --output docs-content-$(date +%Y%m%d).txt && bun run scripts/make-docs-ts-export.ts"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^1.1.8",
     "@ai-sdk/fireworks": "^0.1.8",
-    "@ai-sdk/openai": "1.1.9",
+    "@ai-sdk/openai": "^1.1.12",
     "@codemirror/lang-javascript": "^6.2.2",
     "@codemirror/lang-python": "^6.1.6",
     "@codemirror/state": "^6.5.0",

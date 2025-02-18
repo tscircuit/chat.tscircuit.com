@@ -1,7 +1,7 @@
 import { BlockKind } from "@/components/block"
 import docsContent from "./docs-content.generated"
 
-export const blocksPrompt = `
+export const artifactsPrompt = `
 Blocks is a special user interface mode that helps users with writing, editing, and other content creation tasks. When block is open, it is on the right side of the screen, while the conversation is on the left side. When creating or updating documents, changes are reflected in real-time on the blocks and visible to the user.
 
 DO NOT UPDATE DOCUMENTS IMMEDIATELY AFTER CREATING THEM. WAIT FOR USER FEEDBACK OR REQUEST TO UPDATE IT.
@@ -9,7 +9,7 @@ DO NOT UPDATE DOCUMENTS IMMEDIATELY AFTER CREATING THEM. WAIT FOR USER FEEDBACK 
 This is a guide for using blocks tools: \`createDocument\` and \`updateDocument\`, which render content on a blocks beside the conversation.
 
 **When to use \`createDocument\`:**
-- For substantial content (>10 lines) or code
+- Whenever you need to write code (especially code that creates a circuit)
 - When explicitly requested to create a document
 - For when content contains a single code snippet
 
@@ -39,24 +39,23 @@ export const systemPrompt = ({
   selectedChatModel: string
   textAttachmentStrings: string[]
 }) => {
-  if (selectedChatModel === "tscircuit-docs") {
-    return `
+  return `
     You are a friendly assistant! Keep your responses concise and helpful.
 
-    You are also a smart assistant for questions about tscircuit.
+		${selectedChatModel.includes("reasoning") ? "" : artifactsPrompt}
 
-		${blocksPrompt}
-
-    The user has provided the following attachments:
+    ${
+      textAttachmentStrings.length > 0
+        ? `
+    The user has provided the following attachments, USE THESE IN ANY CIRCUITS
+    YOU DESIGN BY IMPORTING. Note their exported names.
     ${textAttachmentStrings.map((str) => `<attachment>${str}</attachment>`).join("\n")}
-
+    `
+        : ""
+    }
     Here is the documentation for tscircuit:
-    ${docsContent}`
-  } else if (selectedChatModel === "chat-model-reasoning") {
-    return regularPrompt
-  } else {
-    return `${regularPrompt}\n\n${blocksPrompt}`
-  }
+    ${docsContent}
+    `
 }
 
 export const codePrompt = `
