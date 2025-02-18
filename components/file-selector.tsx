@@ -46,7 +46,7 @@ export default function FileSelector({
     <div
       className="absolute z-50 w-[300px] bg-popover text-popover-foreground shadow-md rounded-lg border"
       style={{
-        top: triggerPos.y + 24,
+        top: triggerPos.y + 50,
         left: triggerPos.x,
       }}
     >

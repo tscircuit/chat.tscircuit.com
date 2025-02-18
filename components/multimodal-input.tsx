@@ -63,7 +63,12 @@ function PureMultimodalInput({
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const { width } = useWindowSize()
-
+  const [showFileSelector, setShowFileSelector] = useState(false)
+  const [fileSelectorTriggerPos, setFileSelectorTriggerPos] = useState({
+    x: 0,
+    y: 0,
+  })
+  const containerRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (textareaRef.current) {
       adjustHeight()
@@ -186,8 +191,64 @@ function PureMultimodalInput({
     [setAttachments],
   )
 
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault()
+
+        if (isLoading) {
+          toast.error("Please wait for the model to finish its response!")
+        } else {
+          submitForm()
+        }
+      } else if (event.key === "@") {
+        const textarea = event.currentTarget
+        const textareaRect = textarea.getBoundingClientRect()
+        const containerRect = containerRef.current?.getBoundingClientRect()
+
+        if (!containerRect) return
+
+        const caretPos = textarea.selectionStart
+        const textBeforeCaret = textarea.value.substring(0, caretPos)
+
+        // Calculate x position based on text width
+        const tempSpan = document.createElement("span")
+        tempSpan.style.cssText = window.getComputedStyle(textarea, null).cssText
+        tempSpan.style.position = "absolute"
+        tempSpan.style.visibility = "hidden"
+        tempSpan.textContent = textBeforeCaret
+        document.body.appendChild(tempSpan)
+        const xPos = Math.min(tempSpan.offsetWidth, textarea.offsetWidth)
+        document.body.removeChild(tempSpan)
+
+        setFileSelectorTriggerPos({
+          x: xPos,
+          y: textareaRect.top - containerRect.top - 200,
+        })
+        setShowFileSelector(true)
+      } else {
+        setShowFileSelector(false)
+      }
+    },
+    [setFileSelectorTriggerPos, setShowFileSelector],
+  )
+
+  const handleFileSelect = useCallback(
+    (filename: string) => {
+      if (!textareaRef.current) return
+
+      const cursorPos = textareaRef.current.selectionStart
+      const textBefore = input.substring(0, cursorPos)
+      const textAfter = input.substring(cursorPos)
+
+      setInput(`${textBefore}@${filename} ${textAfter}`)
+      setShowFileSelector(false)
+    },
+    [input, setInput],
+  )
+
   return (
-    <div className="relative w-full flex flex-col gap-4">
+    <div className="relative w-full flex flex-col gap-4" ref={containerRef}>
       {messages.length === 0 &&
         attachments.length === 0 &&
         uploadQueue.length === 0 && (
@@ -234,17 +295,7 @@ function PureMultimodalInput({
         )}
         rows={2}
         autoFocus
-        onKeyDown={(event) => {
-          if (event.key === "Enter" && !event.shiftKey) {
-            event.preventDefault()
-
-            if (isLoading) {
-              toast.error("Please wait for the model to finish its response!")
-            } else {
-              submitForm()
-            }
-          }
-        }}
+        onKeyDown={handleKeyDown}
       />
 
       <div className="absolute bottom-0 p-2 w-fit flex flex-row justify-start">
@@ -262,6 +313,23 @@ function PureMultimodalInput({
           />
         )}
       </div>
+      <FileSelector
+        isOpen={showFileSelector}
+        onClose={() => setShowFileSelector(false)}
+        files={[
+          { name: "asd1", type: "txt" },
+          { name: "asd2", type: "ts" },
+          { name: "asd3", type: "js" },
+          { name: "asd4", type: "css" },
+          { name: "asd5", type: "html" },
+          { name: "asd6", type: "json" },
+          { name: "asd7", type: "md" },
+          { name: "asd8", type: "py" },
+          { name: "asd9", type: "rb" },
+        ]}
+        onSelect={handleFileSelect}
+        triggerPos={fileSelectorTriggerPos}
+      />
     </div>
   )
 }
