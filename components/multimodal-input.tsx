@@ -24,7 +24,7 @@ import { Button } from "./ui/button"
 import { Textarea } from "./ui/textarea"
 import { SuggestedActions } from "./suggested-actions"
 import equal from "fast-deep-equal"
-import FileSelector from "./file-selector"
+import TscircuitPackageSelector from "./tscircuit-package-selector"
 
 function PureMultimodalInput({
   chatId,
@@ -61,6 +61,7 @@ function PureMultimodalInput({
   ) => void
   className?: string
 }) {
+  const containerRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const { width } = useWindowSize()
   const [showFileSelector, setShowFileSelector] = useState(false)
@@ -68,7 +69,6 @@ function PureMultimodalInput({
     x: 0,
     y: 0,
   })
-  const containerRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (textareaRef.current) {
       adjustHeight()
@@ -241,7 +241,7 @@ function PureMultimodalInput({
       const textBefore = input.substring(0, cursorPos)
       const textAfter = input.substring(cursorPos)
 
-      setInput(`${textBefore}@${filename} ${textAfter}`)
+      setInput(`${textBefore}${filename} ${textAfter}`)
       setShowFileSelector(false)
     },
     [input, setInput],
@@ -313,9 +313,14 @@ function PureMultimodalInput({
           />
         )}
       </div>
-      <FileSelector
+      <TscircuitPackageSelector
         isOpen={showFileSelector}
-        onClose={() => setShowFileSelector(false)}
+        onClose={({ refocusInput }) => {
+          setShowFileSelector(false)
+          if (refocusInput) {
+            textareaRef.current?.focus()
+          }
+        }}
         files={[
           { name: "asd1", type: "txt" },
           { name: "asd2", type: "ts" },

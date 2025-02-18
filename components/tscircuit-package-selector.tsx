@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useRef } from "react"
+"use client"
+
+import React, { useState, useEffect, useRef, useMemo } from "react"
 import {
   Command,
   CommandDialog,
@@ -7,18 +9,18 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "../components/command"
-import { FileIcon } from "@/components/icons"
+} from "./command"
+import { FileIcon } from "./icons"
 
 interface FileSelectorProps {
   isOpen: boolean
-  onClose: () => void
+  onClose: ({ refocusInput }: { refocusInput: boolean }) => void
   onSelect: (filename: string) => void
   triggerPos: { x: number; y: number }
   files: Array<{ name: string; type: string }>
 }
 
-export default function FileSelector({
+export default function TscircuitPackageSelector({
   isOpen,
   onClose,
   onSelect,
@@ -26,18 +28,25 @@ export default function FileSelector({
   files,
 }: FileSelectorProps) {
   const [search, setSearch] = useState("")
-  const [filteredFiles, setFilteredFiles] = useState(files)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    if (search) {
-      setFilteredFiles(
-        files.filter((file) =>
-          file.name.toLowerCase().includes(search.toLowerCase()),
-        ),
-      )
-    } else {
-      setFilteredFiles(files)
+    if (isOpen) {
+      // Focus the input when the selector opens
+      setTimeout(() => {
+        inputRef.current?.focus()
+      }, 0)
+      setSearch("")
     }
+  }, [isOpen])
+
+  const filteredFiles = useMemo(() => {
+    if (search) {
+      return files.filter((file) =>
+        file.name.toLowerCase().includes(search.toLowerCase()),
+      )
+    }
+    return files
   }, [search, files])
 
   if (!isOpen) return null
@@ -50,21 +59,32 @@ export default function FileSelector({
         left: triggerPos.x,
       }}
     >
-      <Command>
+      <Command
+        shouldFilter={false}
+        onKeyDown={(e) => {
+          if (e.key === "Escape" || (e.key === "Backspace" && !search)) {
+            e.preventDefault()
+            onClose({ refocusInput: true })
+          }
+        }}
+      >
         <CommandInput
-          placeholder="Search files..."
+          ref={inputRef}
+          placeholder="Search packages..."
           value={search}
-          onValueChange={setSearch}
+          onValueChange={(newSearch) => {
+            setSearch(newSearch)
+          }}
         />
         <CommandList>
-          <CommandEmpty>No files found.</CommandEmpty>
+          <CommandEmpty>No packages found.</CommandEmpty>
           <CommandGroup>
             {filteredFiles.map((file) => (
               <CommandItem
                 key={file.name}
                 onSelect={() => {
                   onSelect(file.name)
-                  onClose()
+                  onClose({ refocusInput: true })
                 }}
                 className="flex items-center gap-2 p-2 cursor-pointer hover:bg-accent"
               >
