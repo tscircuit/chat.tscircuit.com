@@ -1,26 +1,34 @@
-import * as React from "react";
-import { motion } from "framer-motion";
-import { ChevronUp, ChevronDown } from "lucide-react";
+import * as React from "react"
+import { motion } from "framer-motion"
+import { ChevronUp, ChevronDown } from "lucide-react"
 
 interface BottomContentDrawerProps {
   /** Sets the initial expanded state of the drawer. */
-  openByDefault?: boolean;
-  children: React.ReactNode;
+  openByDefault?: boolean
+  children: React.ReactNode
+  timesRunWasPressed: number
 }
 
 export function BottomContentDrawer({
   openByDefault = false,
+  timesRunWasPressed,
   children,
 }: BottomContentDrawerProps) {
-  const [isExpanded, setIsExpanded] = React.useState(openByDefault);
+  const [isExpanded, setIsExpanded] = React.useState(openByDefault)
+
+  React.useEffect(() => {
+    if (timesRunWasPressed > 0) {
+      setIsExpanded(true)
+    }
+  }, [timesRunWasPressed])
 
   const toggleDrawer = () => {
-    setIsExpanded((prev) => !prev);
-  };
+    setIsExpanded((prev) => !prev)
+  }
 
   // Define heights (in pixels) for the expanded drawer and its header-only state
-  const expandedHeight = 800;
-  const headerHeight = 40;
+  const expandedHeight = Math.min(650, window.innerHeight)
+  const headerHeight = 40
 
   return (
     <motion.div
@@ -33,16 +41,17 @@ export function BottomContentDrawer({
     >
       <div className="h-full flex flex-col">
         {/* Drawer Header */}
-        <div className="flex justify-center items-center p-2">
-          <button onClick={toggleDrawer} className="text-gray-500 w-full text-center justify-center items-center flex">
+        <div className="flex justify-center items-center">
+          <button
+            onClick={toggleDrawer}
+            className="text-gray-500 w-full text-center justify-center items-center flex hover:bg-gray-100 py-2"
+          >
             {isExpanded ? <ChevronDown size={24} /> : <ChevronUp size={24} />}
           </button>
         </div>
         {/* Drawer Content */}
-        <div className="flex-1 overflow-auto">
-          {children}
-        </div>
+        <div className="flex-1 overflow-auto">{children}</div>
       </div>
     </motion.div>
-  );
+  )
 }

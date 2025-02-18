@@ -1,5 +1,5 @@
-import { Block } from '@/components/create-block';
-import { CodeEditor } from '@/components/code-editor';
+import { Block } from "@/components/create-block"
+import { CodeEditor } from "@/components/code-editor"
 import {
   CopyIcon,
   LogsIcon,
@@ -7,42 +7,43 @@ import {
   PlayIcon,
   RedoIcon,
   UndoIcon,
-} from '@/components/icons';
-import { toast } from 'sonner';
-import { generateUUID } from '@/lib/utils';
-import {TscircuitIframe} from '@/components/TscircuitIframe';
-import {Dialog, DialogContent, DialogTitle} from '@radix-ui/react-dialog';
-import {BottomContentDrawer} from '@/components/bottom-content-drawer';
+} from "@/components/icons"
+import { toast } from "sonner"
+import { generateUUID } from "@/lib/utils"
+import { TscircuitIframe } from "@/components/TscircuitIframe"
+import { Dialog, DialogContent, DialogTitle } from "@radix-ui/react-dialog"
+import { BottomContentDrawer } from "@/components/bottom-content-drawer"
 // import { RunFrame } from '@tscircuit/runframe/runner';
 
 interface Metadata {
   // Instead of a list of console outputs, we now store the circuit code
   // to be rendered in the preview.
-  circuitPreview?: string;
+  circuitPreview?: string
+  timesRunWasPressed?: number
 }
 
-export const codeBlock = new Block<'code', Metadata>({
-  kind: 'code',
+export const codeBlock = new Block<"code", Metadata>({
+  kind: "code",
   description:
-    'Useful for code generation; Code execution is now replaced with a tscircuit runner that converts React code into circuits.',
+    "Useful for code generation; Code execution is now replaced with a tscircuit runner that converts React code into circuits.",
   initialize: async ({ setMetadata }) => {
     setMetadata({
-      circuitPreview: '',
-    });
+      circuitPreview: "",
+    })
   },
   onStreamPart: ({ streamPart, setBlock }) => {
-    if (streamPart.type === 'code-delta') {
+    if (streamPart.type === "code-delta") {
       setBlock((draftBlock) => ({
         ...draftBlock,
         content: streamPart.content as string,
         isVisible:
-          draftBlock.status === 'streaming' &&
+          draftBlock.status === "streaming" &&
           draftBlock.content.length > 300 &&
           draftBlock.content.length < 310
             ? true
             : draftBlock.isVisible,
-        status: 'streaming',
-      }));
+        status: "streaming",
+      }))
     }
   },
   content: ({ metadata, setMetadata, ...props }) => {
@@ -53,76 +54,80 @@ export const codeBlock = new Block<'code', Metadata>({
         </div>
         {/* Render the tscircuit runner preview if circuit code exists */}
         {metadata?.circuitPreview && (
-          <BottomContentDrawer openByDefault>
-              <TscircuitIframe
-                  fsMap={{
-                    "board.tsx": metadata.circuitPreview,
-                  'entrypoint.tsx': `import Board from "./board.tsx"\ncircuit.add(<Board />)`,
-                }}
-                  entrypoint="entrypoint.tsx"
-                />
-            </BottomContentDrawer>
+          <BottomContentDrawer
+            timesRunWasPressed={metadata.timesRunWasPressed ?? 0}
+            openByDefault
+          >
+            <TscircuitIframe
+              fsMap={{
+                "board.tsx": metadata.circuitPreview,
+                "entrypoint.tsx": `import Board from "./board.tsx"\ncircuit.add(<Board />)`,
+              }}
+              entrypoint="entrypoint.tsx"
+            />
+          </BottomContentDrawer>
         )}
       </div>
-    );
+    )
   },
   actions: [
     {
       icon: <PlayIcon size={18} />,
-      label: 'Run',
-      description: 'Execute circuit code using tscircuit runner',
+      label: "Run",
+      description: "Execute circuit code using tscircuit runner",
       onClick: async ({ content, setMetadata }) => {
         setMetadata((metadata) => ({
           ...metadata,
           circuitPreview: content,
-        }));
+          timesRunWasPressed: (metadata.timesRunWasPressed ?? 0) + 1,
+        }))
       },
     },
     {
       icon: <UndoIcon size={18} />,
-      description: 'View Previous version',
+      description: "View Previous version",
       onClick: ({ handleVersionChange }) => {
-        handleVersionChange('prev');
+        handleVersionChange("prev")
       },
       isDisabled: ({ currentVersionIndex }) => currentVersionIndex === 0,
     },
     {
       icon: <RedoIcon size={18} />,
-      description: 'View Next version',
+      description: "View Next version",
       onClick: ({ handleVersionChange }) => {
-        handleVersionChange('next');
+        handleVersionChange("next")
       },
       isDisabled: ({ isCurrentVersion }) => isCurrentVersion,
     },
     {
       icon: <CopyIcon size={18} />,
-      description: 'Copy code to clipboard',
+      description: "Copy code to clipboard",
       onClick: ({ content }) => {
-        navigator.clipboard.writeText(content);
-        toast.success('Copied to clipboard!');
+        navigator.clipboard.writeText(content)
+        toast.success("Copied to clipboard!")
       },
     },
   ],
   toolbar: [
     {
       icon: <MessageIcon />,
-      description: 'Add comments',
+      description: "Add comments",
       onClick: ({ appendMessage }) => {
         appendMessage({
-          role: 'user',
-          content: 'Add comments to the code snippet for understanding',
-        });
+          role: "user",
+          content: "Add comments to the code snippet for understanding",
+        })
       },
     },
     {
       icon: <LogsIcon />,
-      description: 'Add logs',
+      description: "Add logs",
       onClick: ({ appendMessage }) => {
         appendMessage({
-          role: 'user',
-          content: 'Add logs to the code snippet for debugging',
-        });
+          role: "user",
+          content: "Add logs to the code snippet for debugging",
+        })
       },
     },
   ],
-});
+})
