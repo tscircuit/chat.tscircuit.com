@@ -1,7 +1,8 @@
-import { motion } from 'framer-motion';
-import Link from 'next/link';
+import { motion } from "framer-motion"
+import Link from "next/link"
 
-import { MessageIcon, VercelIcon } from './icons';
+import { MessageIcon, VercelIcon } from "./icons"
+import { BotIcon, CircuitBoard } from "lucide-react"
 
 export const Overview = () => {
   return (
@@ -15,37 +16,53 @@ export const Overview = () => {
     >
       <div className="rounded-xl p-6 flex flex-col gap-8 leading-relaxed text-center max-w-xl">
         <p className="flex flex-row justify-center gap-4 items-center">
-          <VercelIcon size={32} />
+          <CircuitBoard size={32} />
           <span>+</span>
-          <MessageIcon size={32} />
+          <BotIcon size={32} />
         </p>
         <p>
-          This is an{' '}
+          This is an{" "}
           <Link
             className="font-medium underline underline-offset-4"
             href="https://github.com/tscircuit/tscircuit"
             target="_blank"
           >
             open source
-          </Link>{' '}
-          chatbot that allows you to create and preview electronic circuit boards using <Link
+          </Link>{" "}
+          chatbot that allows you to create and preview electronic circuit
+          boards using{" "}
+          <Link
             className="font-medium underline underline-offset-4"
             href="https://tscircuit.com"
             target="_blank"
           >
             tscircuit
-          </Link>.
+          </Link>
+          .
         </p>
         <p>
-          Learn more in the <Link
+          Learn more in the{" "}
+          <Link
             className="font-medium underline underline-offset-4"
             href="https://docs.tscircuit.com"
             target="_blank"
           >
             tscircuit docs
-          </Link>.
+          </Link>
+          .
+        </p>
+        <p>
+          Use <b>&quot;@&quot;</b> to import subcircuits and modules from the{" "}
+          <Link
+            className="font-medium underline underline-offset-4"
+            href="https://tscircuit.com/packages"
+            target="_blank"
+          >
+            tscircuit registry
+          </Link>
+          .
         </p>
       </div>
     </motion.div>
-  );
-};
+  )
+}
