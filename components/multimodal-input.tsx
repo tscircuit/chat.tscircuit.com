@@ -25,6 +25,7 @@ import { Textarea } from "./ui/textarea"
 import { SuggestedActions } from "./suggested-actions"
 import equal from "fast-deep-equal"
 import TscircuitPackageSelector from "./tscircuit-package-selector"
+import { loadTscircuitPackageAsAttachment } from "@/lib/tscircuit/load-tscircuit-package-as-attachement"
 
 function PureMultimodalInput({
   chatId,
@@ -211,14 +212,21 @@ function PureMultimodalInput({
   )
 
   const handleFileSelect = useCallback(
-    (filename: string) => {
+    async (packageName: string) => {
       if (!textareaRef.current) return
 
       const cursorPos = textareaRef.current.selectionStart
       const textBefore = input.substring(0, cursorPos)
       const textAfter = input.substring(cursorPos)
 
-      setInput(`${textBefore}@${filename} ${textAfter}`)
+      const attachment = await loadTscircuitPackageAsAttachment(packageName)
+
+      setAttachments((currentAttachments) => [
+        ...currentAttachments,
+        attachment,
+      ])
+
+      // setInput(`${textBefore}@${filename} ${textAfter}`)
       setShowFileSelector(false)
       setTimeout(() => {
         textareaRef.current?.focus()
