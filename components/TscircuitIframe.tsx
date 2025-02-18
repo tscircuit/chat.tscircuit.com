@@ -53,7 +53,7 @@ export const TscircuitIframe = (runFrameProps: TscircuitIframeProps) => {
         style={{
           overflow: "hidden",
           width: "100%",
-          height: 600,
+          height: Math.min(600, window.innerHeight - 50),
           border: "none",
           padding: 0,
           margin: 0,

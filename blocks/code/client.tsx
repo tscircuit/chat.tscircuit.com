@@ -19,6 +19,7 @@ interface Metadata {
   // Instead of a list of console outputs, we now store the circuit code
   // to be rendered in the preview.
   circuitPreview?: string
+  timesRunWasPressed?: number
 }
 
 export const codeBlock = new Block<"code", Metadata>({
@@ -53,7 +54,10 @@ export const codeBlock = new Block<"code", Metadata>({
         </div>
         {/* Render the tscircuit runner preview if circuit code exists */}
         {metadata?.circuitPreview && (
-          <BottomContentDrawer openByDefault>
+          <BottomContentDrawer
+            timesRunWasPressed={metadata.timesRunWasPressed ?? 0}
+            openByDefault
+          >
             <TscircuitIframe
               fsMap={{
                 "board.tsx": metadata.circuitPreview,
@@ -75,6 +79,7 @@ export const codeBlock = new Block<"code", Metadata>({
         setMetadata((metadata) => ({
           ...metadata,
           circuitPreview: content,
+          timesRunWasPressed: (metadata.timesRunWasPressed ?? 0) + 1,
         }))
       },
     },

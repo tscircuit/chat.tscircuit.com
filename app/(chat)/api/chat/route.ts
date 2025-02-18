@@ -27,6 +27,7 @@ import { requestSuggestions } from "@/lib/ai/tools/request-suggestions"
 import { getWeather } from "@/lib/ai/tools/get-weather"
 import { removeTextAttachments } from "@/lib/ai/remove-text-attachments"
 import { getTextAttachmentStrings } from "@/lib/ai/get-text-attachment-strings"
+import { openai } from "@ai-sdk/openai"
 
 export const maxDuration = 60
 

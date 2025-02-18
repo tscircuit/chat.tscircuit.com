@@ -22,8 +22,8 @@ export const myProvider = customProvider({
     // "circuit-engineer-large": anthropic("claude-3-5-sonnet-latest"),
     "title-model": openai("gpt-4-turbo"),
     "block-model": openai("gpt-4o"),
-    "tscircuit-engineer-small": openai("gpt-4o"),
-    "tscircuit-engineer-tiny": openai("gpt-4o-mini"),
+    "circuit-engineer-small": openai("gpt-4o"),
+    "circuit-engineer-tiny": openai("gpt-4o-mini"),
   },
   imageModels: {
     // 'small-model': openai.image('dall-e-2'),
