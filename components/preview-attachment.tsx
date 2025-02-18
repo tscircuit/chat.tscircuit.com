@@ -2,6 +2,19 @@ import type { Attachment } from "ai"
 
 import { LoaderIcon } from "./icons"
 
+const TscircuitPackageImage = ({ name }: { name: string }) => {
+  const url = `https://registry-api.tscircuit.com/snippets/images/${name}/pcb.svg`
+  return (
+    <div className="size-full rounded-md overflow-hidden">
+      <img
+        src={url}
+        alt={name}
+        className="object-contain scale-[4] rotate-45"
+      />
+    </div>
+  )
+}
+
 export const PreviewAttachment = ({
   attachment,
   isUploading = false,
@@ -24,6 +37,8 @@ export const PreviewAttachment = ({
               alt={name ?? "An image attachment"}
               className="rounded-md size-full object-cover"
             />
+          ) : contentType === "text/plain" ? (
+            <TscircuitPackageImage key={name} name={name!} />
           ) : (
             <div className="" />
           )

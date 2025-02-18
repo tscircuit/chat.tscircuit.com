@@ -10,15 +10,15 @@ export const DEFAULT_CHAT_MODEL: string = "tscircuit-docs"
 
 export const myProvider = customProvider({
   languageModels: {
-    "chat-model-small": openai("gpt-4o-mini"),
-    "chat-model-large": openai("gpt-4o"),
-    "chat-model-reasoning": wrapLanguageModel({
-      model: fireworks("accounts/fireworks/models/deepseek-r1"),
-      middleware: extractReasoningMiddleware({ tagName: "think" }),
-    }),
+    // "chat-model-small": openai("gpt-4o-mini"),
+    // "chat-model-large": openai("gpt-4o"),
+    // "chat-model-reasoning": wrapLanguageModel({
+    //   model: fireworks("accounts/fireworks/models/deepseek-r1"),
+    //   middleware: extractReasoningMiddleware({ tagName: "think" }),
+    // }),
     "title-model": openai("gpt-4-turbo"),
     "block-model": openai("gpt-4o-mini"),
-    "tscircuit-docs": openai("gpt-4o-mini"),
+    "tscircuit-docs": openai("gpt-4o"),
   },
   imageModels: {
     // 'small-model': openai.image('dall-e-2'),

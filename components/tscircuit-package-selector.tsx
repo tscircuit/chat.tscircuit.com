@@ -133,7 +133,7 @@ export default function TscircuitPackageSelector({
                 </div>
                 <div className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">
                   <span>{pkg.star_count}</span>
-                  <StarIcon size="xs" />
+                  <StarIcon size={8} />
                 </div>
               </CommandItem>
             ))}

@@ -1,10 +1,8 @@
-import { BlockKind } from "@/components/block";
-import docsContent from "./docs-content.generated";
+import { BlockKind } from "@/components/block"
+import docsContent from "./docs-content.generated"
 
 export const blocksPrompt = `
 Blocks is a special user interface mode that helps users with writing, editing, and other content creation tasks. When block is open, it is on the right side of the screen, while the conversation is on the left side. When creating or updating documents, changes are reflected in real-time on the blocks and visible to the user.
-
-When asked to write code, always use blocks. When writing code, specify the language in the backticks, e.g. \`\`\`tsx\`code here\`\`\`. The default language is Typescript/React. Other languages are not yet supported, so let the user know if they request a different language.
 
 DO NOT UPDATE DOCUMENTS IMMEDIATELY AFTER CREATING THEM. WAIT FOR USER FEEDBACK OR REQUEST TO UPDATE IT.
 
@@ -29,32 +27,37 @@ This is a guide for using blocks tools: \`createDocument\` and \`updateDocument\
 - Immediately after creating a document
 
 Do not update document right after creating it. Wait for user feedback or request to update it.
-`;
+`
 
 export const regularPrompt =
-	"You are a friendly assistant! Keep your responses concise and helpful.";
+  "You are a friendly assistant! Keep your responses concise and helpful."
 
 export const systemPrompt = ({
-	selectedChatModel,
+  selectedChatModel,
+  textAttachmentStrings,
 }: {
-	selectedChatModel: string;
+  selectedChatModel: string
+  textAttachmentStrings: string[]
 }) => {
-	if (selectedChatModel === "tscircuit-docs") {
-		return `
+  if (selectedChatModel === "tscircuit-docs") {
+    return `
     You are a friendly assistant! Keep your responses concise and helpful.
 
     You are also a smart assistant for questions about tscircuit.
 
 		${blocksPrompt}
 
+    The user has provided the following attachments:
+    ${textAttachmentStrings.map((str) => `<attachment>${str}</attachment>`).join("\n")}
+
     Here is the documentation for tscircuit:
-    ${docsContent}`;
-	} else if (selectedChatModel === "chat-model-reasoning") {
-		return regularPrompt;
-	} else {
-		return `${regularPrompt}\n\n${blocksPrompt}`;
-	}
-};
+    ${docsContent}`
+  } else if (selectedChatModel === "chat-model-reasoning") {
+    return regularPrompt
+  } else {
+    return `${regularPrompt}\n\n${blocksPrompt}`
+  }
+}
 
 export const codePrompt = `
 You are a Typescript/React code generator that creates self-contained, executable code snippets with a single export. When writing code:
@@ -92,23 +95,22 @@ export default () => (
 
 Here is the documentation for tscircuit:
 ${docsContent}
-`;
-
+`
 
 export const updateDocumentPrompt = (
-	currentContent: string | null,
-	type: BlockKind,
+  currentContent: string | null,
+  type: BlockKind,
 ) =>
-	type === "text"
-		? `\
+  type === "text"
+    ? `\
 Improve the following contents of the document based on the given prompt.
 
 ${currentContent}
 `
-		: type === "code"
-			? `\
+    : type === "code"
+      ? `\
 Improve the following code snippet based on the given prompt.
 
 ${currentContent}
 `
-	: "";
+      : ""

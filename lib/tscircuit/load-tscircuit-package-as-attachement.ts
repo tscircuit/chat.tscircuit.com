@@ -56,10 +56,8 @@ export const loadTscircuitPackageAsAttachment = async (
   }
 
   return {
-    url: `data:text/x-tsci-package;charset=utf-8,${encodeURIComponent(
-      promptSnippet,
-    )}`,
-    contentType: "text/x-tsci-package",
+    url: `data:text/plain;charset=utf-8,${encodeURIComponent(promptSnippet)}`,
+    contentType: "text/plain",
     name: packageName,
   }
 }
