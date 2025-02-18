@@ -1,6 +1,4 @@
-"use client"
-
-import React, { useState, useEffect, useRef, useMemo } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import {
   Command,
   CommandDialog,
@@ -11,13 +9,20 @@ import {
   CommandList,
 } from "./command"
 import { FileIcon } from "./icons"
+import { StarIcon } from "lucide-react"
 
-interface FileSelectorProps {
+interface Package {
+  name: string
+  package_id: string
+  owner_github_username: string
+  star_count: number
+}
+
+interface TscircuitPackageSelectorProps {
   isOpen: boolean
   onClose: ({ refocusInput }: { refocusInput: boolean }) => void
-  onSelect: (filename: string) => void
+  onSelect: (packageName: string) => void
   triggerPos: { x: number; y: number }
-  files: Array<{ name: string; type: string }>
 }
 
 export default function TscircuitPackageSelector({
@@ -25,39 +30,69 @@ export default function TscircuitPackageSelector({
   onClose,
   onSelect,
   triggerPos,
-  files,
-}: FileSelectorProps) {
+}: TscircuitPackageSelectorProps) {
   const [search, setSearch] = useState("")
+  const [packages, setPackages] = useState<Package[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  // Debounce search
+  useEffect(() => {
+    if (!search) {
+      setPackages([])
+      return
+    }
+
+    const fetchPackages = async () => {
+      setIsLoading(true)
+      setError(null)
+
+      try {
+        const response = await fetch(
+          "https://registry-api.tscircuit.com/packages/search",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ query: search }),
+          },
+        )
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch packages")
+        }
+
+        const data = await response.json()
+        setPackages(data.packages)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred")
+        setPackages([])
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    const timeoutId = setTimeout(fetchPackages, 300)
+    return () => clearTimeout(timeoutId)
+  }, [search])
 
   useEffect(() => {
     if (isOpen) {
-      // Focus the input when the selector opens
       setTimeout(() => {
         inputRef.current?.focus()
       }, 0)
       setSearch("")
+      setPackages([])
+      setError(null)
     }
   }, [isOpen])
 
-  const filteredFiles = useMemo(() => {
-    if (search) {
-      return files.filter((file) =>
-        file.name.toLowerCase().includes(search.toLowerCase()),
-      )
-    }
-    return files
-  }, [search, files])
-
-  if (!isOpen) return null
-
   return (
-    <div
-      className="absolute z-50 w-[300px] bg-popover text-popover-foreground shadow-md rounded-lg border"
-      style={{
-        top: triggerPos.y + 50,
-        left: triggerPos.x,
-      }}
+    <CommandDialog
+      open={isOpen}
+      onOpenChange={() => onClose({ refocusInput: true })}
     >
       <Command
         shouldFilter={false}
@@ -72,29 +107,39 @@ export default function TscircuitPackageSelector({
           ref={inputRef}
           placeholder="Search packages..."
           value={search}
-          onValueChange={(newSearch) => {
-            setSearch(newSearch)
-          }}
+          onValueChange={setSearch}
         />
         <CommandList>
+          {error && (
+            <div className="p-4 text-center text-sm text-red-500">{error}</div>
+          )}
           <CommandEmpty>No packages found.</CommandEmpty>
           <CommandGroup>
-            {filteredFiles.map((file) => (
+            {packages.map((pkg) => (
               <CommandItem
-                key={file.name}
+                key={pkg.package_id}
                 onSelect={() => {
-                  onSelect(file.name)
+                  onSelect(pkg.name)
                   onClose({ refocusInput: true })
                 }}
                 className="flex items-center gap-2 p-2 cursor-pointer hover:bg-accent"
               >
                 <FileIcon />
-                <span>{file.name}</span>
+                <div className="flex flex-col">
+                  <span className="font-medium text-black">{pkg.name}</span>
+                  <span className="text-xs text-muted-foreground">
+                    by {pkg.owner_github_username}
+                  </span>
+                </div>
+                <div className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">
+                  <span>{pkg.star_count}</span>
+                  <StarIcon size="xs" />
+                </div>
               </CommandItem>
             ))}
           </CommandGroup>
         </CommandList>
       </Command>
-    </div>
+    </CommandDialog>
   )
 }

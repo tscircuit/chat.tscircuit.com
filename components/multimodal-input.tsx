@@ -61,7 +61,6 @@ function PureMultimodalInput({
   ) => void
   className?: string
 }) {
-  const containerRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const { width } = useWindowSize()
   const [showFileSelector, setShowFileSelector] = useState(false)
@@ -202,35 +201,13 @@ function PureMultimodalInput({
           submitForm()
         }
       } else if (event.key === "@") {
-        const textarea = event.currentTarget
-        const textareaRect = textarea.getBoundingClientRect()
-        const containerRect = containerRef.current?.getBoundingClientRect()
-
-        if (!containerRect) return
-
-        const caretPos = textarea.selectionStart
-        const textBeforeCaret = textarea.value.substring(0, caretPos)
-
-        // Calculate x position based on text width
-        const tempSpan = document.createElement("span")
-        tempSpan.style.cssText = window.getComputedStyle(textarea, null).cssText
-        tempSpan.style.position = "absolute"
-        tempSpan.style.visibility = "hidden"
-        tempSpan.textContent = textBeforeCaret
-        document.body.appendChild(tempSpan)
-        const xPos = Math.min(tempSpan.offsetWidth, textarea.offsetWidth)
-        document.body.removeChild(tempSpan)
-
-        setFileSelectorTriggerPos({
-          x: xPos,
-          y: textareaRect.top - containerRect.top - 200,
-        })
         setShowFileSelector(true)
+        event.preventDefault()
       } else {
         setShowFileSelector(false)
       }
     },
-    [setFileSelectorTriggerPos, setShowFileSelector],
+    [setFileSelectorTriggerPos, setShowFileSelector, submitForm],
   )
 
   const handleFileSelect = useCallback(
@@ -241,14 +218,17 @@ function PureMultimodalInput({
       const textBefore = input.substring(0, cursorPos)
       const textAfter = input.substring(cursorPos)
 
-      setInput(`${textBefore}${filename} ${textAfter}`)
+      setInput(`${textBefore}@${filename} ${textAfter}`)
       setShowFileSelector(false)
+      setTimeout(() => {
+        textareaRef.current?.focus()
+      }, 0)
     },
     [input, setInput],
   )
 
   return (
-    <div className="relative w-full flex flex-col gap-4" ref={containerRef}>
+    <div className="relative w-full flex flex-col gap-4">
       {messages.length === 0 &&
         attachments.length === 0 &&
         uploadQueue.length === 0 && (
@@ -321,17 +301,6 @@ function PureMultimodalInput({
             textareaRef.current?.focus()
           }
         }}
-        files={[
-          { name: "asd1", type: "txt" },
-          { name: "asd2", type: "ts" },
-          { name: "asd3", type: "js" },
-          { name: "asd4", type: "css" },
-          { name: "asd5", type: "html" },
-          { name: "asd6", type: "json" },
-          { name: "asd7", type: "md" },
-          { name: "asd8", type: "py" },
-          { name: "asd9", type: "rb" },
-        ]}
         onSelect={handleFileSelect}
         triggerPos={fileSelectorTriggerPos}
       />
