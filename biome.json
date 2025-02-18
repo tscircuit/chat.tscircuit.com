@@ -31,7 +31,11 @@
       "complexity": {
         "noForEach": "info"
       },
+      "correctness": {
+        "useExhaustiveDependencies": "off"
+      },
       "style": {
+        "useImportType": "off",
         "noUselessElse": "off",
         "noNonNullAssertion": "off",
         "useNumberNamespace": "off",
