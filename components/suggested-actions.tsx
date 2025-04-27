@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Button } from './ui/button';
-import { ChatRequestOptions, CreateMessage, Message } from 'ai';
+import type { ChatRequestOptions, CreateMessage, Message } from 'ai';
 import { memo } from 'react';
 
 interface SuggestedActionsProps {
@@ -22,13 +22,13 @@ function PureSuggestedActions({ chatId, append }: SuggestedActionsProps) {
     },
     {
       title: 'Make a Raspberry Pi hat',
-      label: `that controls an epaper display`,
-      action: `Make a Raspberry Pi hat that controls an epaper display`,
+      label: 'that controls an epaper display',
+      action: 'Make a Raspberry Pi hat that controls an epaper display',
     },
     {
       title: 'Design an LED Matrix',
-      label: `with a grid of 5x4 LEDs`,
-      action: `Design an LED Matrix with a grid of 5x4 LEDs`,
+      label: 'with a grid of 5x4 LEDs',
+      action: 'Design an LED Matrix with a grid of 5x4 LEDs',
     },
     {
       title: 'Design a sign',
@@ -58,7 +58,7 @@ function PureSuggestedActions({ chatId, append }: SuggestedActionsProps) {
                 content: suggestedAction.action,
               });
             }}
-            className="text-left border rounded-xl px-4 py-3.5 text-sm flex-1 gap-1 sm:flex-col w-full h-auto justify-start items-start"
+            className="text-left border rounded-xl px-4 py-3.5 text-sm flex-1 flex-wrap gap-1 sm:flex-col w-full h-auto justify-start items-start"
           >
             <span className="font-medium">{suggestedAction.title}</span>
             <span className="text-muted-foreground">
