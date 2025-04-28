@@ -1,8 +1,8 @@
 import { DataStreamWriter, tool } from 'ai';
-import { Session } from 'next-auth';
 import { z } from 'zod';
 import { getDocumentById, saveDocument } from '@/lib/db/queries';
 import { documentHandlersByBlockKind } from '@/lib/blocks/server';
+import { Session } from '@/app/(auth)/server-auth';
 
 interface UpdateDocumentProps {
   session: Session;

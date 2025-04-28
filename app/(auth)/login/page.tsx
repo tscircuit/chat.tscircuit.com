@@ -2,65 +2,73 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useActionState, useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { toast } from 'sonner';
 
-import { AuthForm } from '@/components/auth-form';
-import { SubmitButton } from '@/components/submit-button';
-
-import { login, type LoginActionState } from '../actions';
+import { useAuthStore } from '@/app/(auth)/auth-store';
+import { TscircuitAuthButton } from '@/components/tscircuit-auth-button';
 
 export default function Page() {
   const router = useRouter();
+  const { isAuthenticated, isLoading, checkAndSetUserFromToken } = useAuthStore();
 
-  const [email, setEmail] = useState('');
-  const [isSuccessful, setIsSuccessful] = useState(false);
-
-  const [state, formAction] = useActionState<LoginActionState, FormData>(
-    login,
-    {
-      status: 'idle',
-    },
-  );
-
+  // Check for session token and handle errors
   useEffect(() => {
-    if (state.status === 'failed') {
-      toast.error('Invalid credentials!');
-    } else if (state.status === 'invalid_data') {
-      toast.error('Failed validating your submission!');
-    } else if (state.status === 'success') {
-      setIsSuccessful(true);
-      router.refresh();
+    // Check if there's an error in the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    
+    if (error) {
+      toast.error('Authentication failed. Please try again.');
+      
+      // Clean up the URL by removing the error parameter
+      const cleanUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
     }
-  }, [state.status, router]);
-
-  const handleSubmit = (formData: FormData) => {
-    setEmail(formData.get('email') as string);
-    formAction(formData);
-  };
+    
+    // Check and set user from token if present
+    checkAndSetUserFromToken();
+  }, [checkAndSetUserFromToken]);
+  
+  // Redirect to home if already authenticated
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      router.push('/');
+    }
+  }, [isLoading, isAuthenticated, router]);
 
   return (
-    <div className="flex h-dvh w-screen items-start pt-12 md:pt-0 md:items-center justify-center bg-background">
-      <div className="w-full max-w-md overflow-hidden rounded-2xl flex flex-col gap-12">
+    <div className="flex h-dvh w-screen items-center justify-center bg-background px-4">
+      <div className="w-full max-w-md overflow-hidden rounded-2xl flex flex-col gap-12 bg-background border border-border py-10 shadow-md mx-auto">
         <div className="flex flex-col items-center justify-center gap-2 px-4 text-center sm:px-16">
-          <h3 className="text-xl font-semibold dark:text-zinc-50">Sign In</h3>
+          <h3 className="text-xl font-semibold dark:text-zinc-50">Welcome Back!</h3>
           <p className="text-sm text-gray-500 dark:text-zinc-400">
-            Use your email and password to sign in
+            Continue with your tscircuit account
           </p>
         </div>
-        <AuthForm action={handleSubmit} defaultEmail={email}>
-          <SubmitButton isSuccessful={isSuccessful}>Sign in</SubmitButton>
-          <p className="text-center text-sm text-gray-600 mt-4 dark:text-zinc-400">
-            {"Don't have an account? "}
+        
+        <div className="flex flex-col gap-6 px-4 sm:px-16">
+          <TscircuitAuthButton />
+          
+          <p className="text-center text-sm text-gray-600 dark:text-zinc-400">
+            {"By signing in, you agree to our "}
             <Link
-              href="/register"
+              href="https://tscircuit.com/terms"
               className="font-semibold text-gray-800 hover:underline dark:text-zinc-200"
+              target="_blank"
             >
-              Sign up
+              Terms of Service
             </Link>
-            {' for free.'}
+            {" and "}
+            <Link
+              href="https://tscircuit.com/privacy"
+              className="font-semibold text-gray-800 hover:underline dark:text-zinc-200"
+              target="_blank"
+            >
+              Privacy Policy
+            </Link>
           </p>
-        </AuthForm>
+        </div>
       </div>
     </div>
   );

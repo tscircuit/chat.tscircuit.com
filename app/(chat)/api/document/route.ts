@@ -1,4 +1,4 @@
-import { auth } from '@/app/(auth)/auth';
+import { getSession } from '@/app/(auth)/server-auth';
 import { BlockKind } from '@/components/block';
 import {
   deleteDocumentsByIdAfterTimestamp,
@@ -14,7 +14,7 @@ export async function GET(request: Request) {
     return new Response('Missing id', { status: 400 });
   }
 
-  const session = await auth();
+  const session = await getSession();
 
   if (!session || !session.user) {
     return new Response('Unauthorized', { status: 401 });
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
     return new Response('Missing id', { status: 400 });
   }
 
-  const session = await auth();
+  const session = await getSession();
 
   if (!session) {
     return new Response('Unauthorized', { status: 401 });
@@ -79,7 +79,7 @@ export async function PATCH(request: Request) {
     return new Response('Missing id', { status: 400 });
   }
 
-  const session = await auth();
+  const session = await getSession();
 
   if (!session || !session.user) {
     return new Response('Unauthorized', { status: 401 });

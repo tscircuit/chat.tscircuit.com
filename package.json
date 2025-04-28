@@ -2,7 +2,7 @@
   "name": "tscircuit-chatbot",
   "version": "0.1.0",
   "scripts": {
-    "dev": "next dev --turbo",
+    "dev": "next dev --turbo --port 3100",
     "build": "tsx lib/db/migrate && next build",
     "start": "npm run dev",
     "lint": "next lint && biome lint --write --unsafe",
@@ -52,6 +52,7 @@
     "fast-deep-equal": "^3.1.3",
     "framer-motion": "^11.3.19",
     "geist": "^1.3.1",
+    "jose": "^6.0.10",
     "lucide-react": "^0.446.0",
     "nanoid": "^5.0.8",
     "next": "15.0.3-canary.2",
@@ -80,7 +81,8 @@
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
     "usehooks-ts": "^3.1.0",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
