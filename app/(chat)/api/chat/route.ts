@@ -5,7 +5,7 @@ import {
   streamText,
 } from "ai"
 
-import { auth } from "@/app/(auth)/auth"
+import { getSession } from "@/app/(auth)/server-auth"
 import { myProvider } from "@/lib/ai/models"
 import { systemPrompt } from "@/lib/ai/prompts/prompts"
 import {
@@ -24,10 +24,8 @@ import { generateTitleFromUserMessage } from "../../actions"
 import { createDocument } from "@/lib/ai/tools/create-document"
 import { updateDocument } from "@/lib/ai/tools/update-document"
 import { requestSuggestions } from "@/lib/ai/tools/request-suggestions"
-import { getWeather } from "@/lib/ai/tools/get-weather"
 import { removeTextAttachments } from "@/lib/ai/remove-text-attachments"
 import { getTextAttachmentStrings } from "@/lib/ai/get-text-attachment-strings"
-import { openai } from "@ai-sdk/openai"
 
 export const maxDuration = 60
 
@@ -39,7 +37,7 @@ export async function POST(request: Request) {
   }: { id: string; messages: Array<Message>; selectedChatModel: string } =
     await request.json()
 
-  const session = await auth()
+  const session = await getSession()
 
   if (!session || !session.user || !session.user.id) {
     return new Response("Unauthorized", { status: 401 })
@@ -135,7 +133,7 @@ export async function DELETE(request: Request) {
     return new Response("Not Found", { status: 404 })
   }
 
-  const session = await auth()
+  const session = await getSession()
 
   if (!session || !session.user) {
     return new Response("Unauthorized", { status: 401 })

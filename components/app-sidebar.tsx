@@ -17,8 +17,9 @@ import {
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import type { AuthUser } from '@/app/(auth)/auth-store';
 
-export function AppSidebar({ user }: { user: User | undefined }) {
+export function AppSidebar({ user }: { user: AuthUser | undefined }) {
   const router = useRouter();
   const { setOpenMobile } = useSidebar();
 
