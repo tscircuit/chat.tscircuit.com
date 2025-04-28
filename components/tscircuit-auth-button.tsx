@@ -11,16 +11,14 @@ const getNextUrl = () => {
 
 export function TscircuitAuthButton() {
   const [isLoading, setIsLoading] = useState(false);
+  const apiUrl = useTscircuitRegistryUrl();
 
-  const handleGitHubLogin = async () => {
+  const handleLogin = () => {
     setIsLoading(true);
     
     try {
-      // Get the URL for initiating GitHub OAuth
       const nextUrl = getNextUrl();
-      const apiUrl = useTscircuitRegistryUrl();
       
-      // Redirect to the GitHub OAuth authorization endpoint
       const authUrl = `${apiUrl}/internal/oauth/github/authorize?next=${encodeURIComponent(nextUrl)}`;
       window.location.href = authUrl;
     } catch (error) {
@@ -33,7 +31,7 @@ export function TscircuitAuthButton() {
     <Button
       variant="outline"
       className="w-full flex gap-2 items-center justify-center"
-      onClick={handleGitHubLogin}
+      onClick={handleLogin}
       disabled={isLoading}
     >
       {isLoading ? 'Redirecting...' : 'Sign in with tscircuit'}
