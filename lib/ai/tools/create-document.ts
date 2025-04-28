@@ -2,10 +2,10 @@ import { generateUUID } from '@/lib/utils';
 import { DataStreamWriter, tool } from 'ai';
 import { z } from 'zod';
 import { blockKinds, documentHandlersByBlockKind } from '@/lib/blocks/server';
-import { SessionData } from '@/app/(auth)/auth-store';
+import { Session } from '@/app/(auth)/server-auth';
 
 interface CreateDocumentProps {
-  session: SessionData;
+  session: Session;
   dataStream: DataStreamWriter;
 }
 

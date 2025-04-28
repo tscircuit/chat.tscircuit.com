@@ -6,7 +6,7 @@ import { BlockKind } from '@/components/block';
 import { DataStreamWriter } from 'ai';
 import { Document } from '../db/schema';
 import { saveDocument } from '../db/queries';
-import { Session } from 'next-auth';
+import { Session } from '@/app/(auth)/server-auth';
 
 export interface SaveDocumentProps {
   id: string;
