@@ -31,6 +31,10 @@ export async function getUser({
   id,
   github_username,
 }: Partial<User>): Promise<Array<User>> {
+  if (!email && !id && !github_username) {
+    return [];
+  }
+
   try {
     const query = db.select().from(user);
 
@@ -46,6 +50,16 @@ export async function getUser({
   } catch (error) {
     console.error('Failed to get user from database');
     throw error;
+  }
+}
+
+export async function getUsers() {
+  try {
+    const query = db.select().from(user)
+    return await query
+  } catch (error) {
+    console.error("Failed to get users from database")
+    throw error
   }
 }
 
