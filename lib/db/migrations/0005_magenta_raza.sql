@@ -1,0 +1,1 @@
+ALTER TABLE "User" ADD COLUMN "github_username" varchar(64);

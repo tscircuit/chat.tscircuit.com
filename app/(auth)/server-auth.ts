@@ -2,10 +2,12 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import * as jose from 'jose';
 import type { SessionData } from './auth-store';
+import { getUser } from '@/lib/db/queries';
 
 export interface AuthUser {
   id: string;
-  username: string;
+  github_username: string;
+  email: string;
 }
 
 export interface Session {
@@ -29,10 +31,47 @@ export async function getSession(): Promise<Session> {
       return { user: null };
     }
     
+    // Get user ID from token - prioritize id field over account_id (for backward compatibility)
+    const userId = decoded.id || decoded.account_id;
+    
+    // Verify the user exists in the database with this ID
+    const users = await getUser({ id: userId });
+    
+    // If user doesn't exist in the database by ID, try by email or username
+    if (!users || users.length === 0) {
+      // Try to find by email
+      const emailUsers = await getUser({ email: decoded.email });
+      if (emailUsers && emailUsers.length > 0) {
+        return { 
+          user: {
+            id: emailUsers[0].id,
+            github_username: decoded.github_username,
+            email: decoded.email,
+          } 
+        };
+      }
+      
+      // Try to find by GitHub username
+      const githubUsers = await getUser({ github_username: decoded.github_username });
+      if (githubUsers && githubUsers.length > 0) {
+        return { 
+          user: {
+            id: githubUsers[0].id,
+            github_username: decoded.github_username,
+            email: decoded.email,
+          } 
+        };
+      }
+      
+      console.error(`User not found in database for token with ID: ${userId}`);
+      return { user: null };
+    }
+    
     return { 
       user: {
-        id: decoded.account_id,
-        username: decoded.github_username
+        id: users[0].id,
+        github_username: decoded.github_username,
+        email: decoded.email,
       } 
     };
   } catch (error) {
