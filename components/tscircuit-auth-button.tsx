@@ -4,9 +4,10 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useTscircuitRegistryUrl } from '@/hooks/use-tscircuit-registry-url';
 import Image from 'next/image';
+
 const getNextUrl = () => {
   if (typeof window === 'undefined') return '';
-  return window.location.origin;
+  return `${window.location.origin}/api/auth/callback`;
 };
 
 export function TscircuitAuthButton() {
@@ -17,9 +18,8 @@ export function TscircuitAuthButton() {
     setIsLoading(true);
     
     try {
-      const nextUrl = getNextUrl();
-      
-      const authUrl = `${apiUrl}/internal/oauth/github/authorize?next=${encodeURIComponent(nextUrl)}`;
+      const callbackUrl = getNextUrl();
+      const authUrl = `${apiUrl}/internal/oauth/github/authorize?next=${encodeURIComponent(callbackUrl)}`;
       window.location.href = authUrl;
     } catch (error) {
       console.error('GitHub login error:', error);

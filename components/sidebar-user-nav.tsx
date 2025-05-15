@@ -29,13 +29,13 @@ export function SidebarUserNav({ user }: { user: AuthUser }) {
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton className="data-[state=open]:bg-sidebar-accent bg-background data-[state=open]:text-sidebar-accent-foreground h-10">
               <Image
-                src={`https://avatar.vercel.sh/${user.username}`}
-                alt={user.username ?? 'User Avatar'}
+                src={`https://avatar.vercel.sh/${user.github_username}`}
+                alt={user.github_username ?? 'User Avatar'}
                 width={24}
                 height={24}
                 className="rounded-full"
               />
-              <span className="truncate">{user?.username}</span>
+              <span className="truncate">{user?.github_username}</span>
               <ChevronUp className="ml-auto" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>

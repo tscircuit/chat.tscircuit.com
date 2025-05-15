@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { genSaltSync, hashSync } from 'bcrypt-ts';
-import { and, asc, desc, eq, gt, gte, inArray } from 'drizzle-orm';
+import { and, asc, desc, eq, gt, gte, inArray, or } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 
@@ -26,12 +26,40 @@ import { BlockKind } from '@/components/block';
 const client = postgres(process.env.POSTGRES_URL!);
 const db = drizzle(client);
 
-export async function getUser(email: string): Promise<Array<User>> {
+export async function getUser({
+  email,
+  id,
+  github_username,
+}: Partial<User>): Promise<Array<User>> {
+  if (!email && !id && !github_username) {
+    return [];
+  }
+
   try {
-    return await db.select().from(user).where(eq(user.email, email));
+    const query = db.select().from(user);
+
+    if (email) {
+      query.where(eq(user.email, email));
+    } else if (id) {
+      query.where(eq(user.id, id));
+    } else if (github_username) {
+      query.where(eq(user.github_username, github_username));
+    }
+    
+    return await query;
   } catch (error) {
     console.error('Failed to get user from database');
     throw error;
+  }
+}
+
+export async function getUsers() {
+  try {
+    const query = db.select().from(user)
+    return await query
+  } catch (error) {
+    console.error("Failed to get users from database")
+    throw error
   }
 }
 
@@ -342,6 +370,63 @@ export async function updateChatVisiblityById({
     return await db.update(chat).set({ visibility }).where(eq(chat.id, chatId));
   } catch (error) {
     console.error('Failed to update chat visibility in database');
+    throw error;
+  }
+}
+
+export async function getUserByGithubUsername(github_username: string): Promise<Array<User>> {
+  try {
+    return await db.select().from(user).where(eq(user.github_username, github_username));
+  } catch (error) {
+    console.error('Failed to get user by GitHub username from database');
+    throw error;
+  }
+}
+
+export async function getOrCreateGithubUser(github_username: string, email: string): Promise<User> {
+  try {
+    console.log(`Attempting to get or create user: github_username=${github_username}, email=${email}`);
+    
+    // Try to find user by GitHub username or email
+    const existingUsers = await db
+      .select()
+      .from(user)
+      .where(or(eq(user.github_username, github_username), eq(user.email, email)));
+    
+    if (existingUsers.length > 0) {
+      const existingUser = existingUsers[0];
+
+      // If user exists but doesn't have github_username set, update it
+      if (!existingUser.github_username) {
+        await db
+          .update(user)
+          .set({ github_username })
+          .where(eq(user.id, existingUser.id));
+          
+        return { ...existingUser, github_username };
+      }
+      
+      return existingUser;
+    }
+    
+    // Create new user if not found
+    const [newUser] = await db
+      .insert(user)
+      .values({ email, github_username })
+      .returning();
+      
+    return newUser;
+  } catch (error) {
+    console.error('Failed to get or create GitHub user in database', error);
+    throw error;
+  }
+}
+
+export async function deleteUser(email: string) {
+  try {
+    await db.delete(user).where(eq(user.email, email));
+  } catch (error) {
+    console.error('Failed to delete user from database', error);
     throw error;
   }
 }
