@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
   // 2. Decode and validate token
   let decoded: jose.JWTPayload
   try {
-    const secret = new TextEncoder().encode(JWT_SECRET)
+    const secret = new TextEncoder().encode(JWT_SECRET as string)
     const { payload } = await jose.jwtVerify(sessionToken, secret)
     decoded = payload
   } catch (error) {
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
   // 5. Create session token
   let ourSessionToken: string
   try {
-    const secret = new TextEncoder().encode(JWT_SECRET)
+    const secret = new TextEncoder().encode(JWT_SECRET as string)
     const session_id = crypto.randomUUID()
 
     ourSessionToken = await new jose.SignJWT({
