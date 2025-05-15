@@ -4,7 +4,11 @@ import { getOrCreateGithubUser, getUser } from "@/lib/db/queries"
 import type { User } from "@/lib/db/schema"
 
 // Secret for signing JWT tokens - should be environment variable in production
-const JWT_SECRET = process.env.AUTH_SECRET
+const JWT_SECRET = process.env.AUTH_SECRET || (
+  process.env.NODE_ENV === "production"
+    ? new Error("AUTH_SECRET must be set in production")
+    : "dev_secret_do_not_use_in_production"
+)
 
 export async function GET(request: NextRequest) {
   // 1. Try to get session token from various sources
