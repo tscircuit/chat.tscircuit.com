@@ -14,6 +14,7 @@ export const textDocumentHandler = createDocumentHandler<"text">({
 				"Write about the given topic. Markdown is supported. Use headings wherever appropriate.",
 			experimental_transform: smoothStream({ chunking: "word" }),
 			prompt: title,
+			temperature: 1, // GPT-5 only supports temperature value of 1
 		});
 
 		for await (const delta of fullStream) {
@@ -41,6 +42,7 @@ export const textDocumentHandler = createDocumentHandler<"text">({
 			system: updateDocumentPrompt(document.content, "text"),
 			experimental_transform: smoothStream({ chunking: "word" }),
 			prompt: description,
+			temperature: 1, // GPT-5 only supports temperature value of 1
 			experimental_providerMetadata: {
 				openai: {
 					prediction: {
