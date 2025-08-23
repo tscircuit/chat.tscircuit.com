@@ -13,6 +13,7 @@ export const codeDocumentHandler = createDocumentHandler<"code">({
 			model: myProvider.languageModel("block-model"),
 			system: codePrompt,
 			prompt: title,
+			temperature: 1, // GPT-5 only supports temperature value of 1
 			schema: z.object({
 				code: z.string(),
 			}),
@@ -45,6 +46,7 @@ export const codeDocumentHandler = createDocumentHandler<"code">({
 			model: myProvider.languageModel("block-model"),
 			system: updateDocumentPrompt(document.content, "code"),
 			prompt: description,
+			temperature: 1, // GPT-5 only supports temperature value of 1
 			schema: z.object({
 				code: z.string(),
 			}),
