@@ -27,7 +27,7 @@ import { requestSuggestions } from "@/lib/ai/tools/request-suggestions"
 import { removeTextAttachments } from "@/lib/ai/remove-text-attachments"
 import { getTextAttachmentStrings } from "@/lib/ai/get-text-attachment-strings"
 
-export const maxDuration = 60
+export const maxDuration = 300 // enable fluid computing
 
 export async function POST(request: Request) {
   try {
