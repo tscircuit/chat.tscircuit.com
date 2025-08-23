@@ -15,7 +15,7 @@ export const myProvider = customProvider({
     // after creating it
     // "circuit-engineer-large": anthropic("claude-3-5-sonnet-latest"),
     "title-model": wrapLanguageModel({
-      model: openai("gpt-5"),
+      model: openai("gpt-5-mini"),
       middleware: [],
     }),
     "block-model": wrapLanguageModel({
@@ -23,6 +23,7 @@ export const myProvider = customProvider({
       middleware: [],
     }),
     "gpt-5": wrapLanguageModel({ model: openai("gpt-5"), middleware: [] }),
+    "gpt-5-mini": wrapLanguageModel({ model: openai("gpt-5-mini"), middleware: [] }),
   },
   imageModels: {
     // 'small-model': openai.image('dall-e-2'),
@@ -41,5 +42,10 @@ export const chatModels: Array<ChatModel> = [
     id: "gpt-5",
     name: "GPT 5",
     description: "GPT 5 for general assistance",
+  },
+  {
+    id: "gpt-5-mini",
+    name: "GPT 5 Mini",
+    description: "GPT 5 Mini for general assistance",
   },
 ]
