@@ -39,7 +39,7 @@ interface ChatModel {
 export const chatModels: Array<ChatModel> = [
   {
     id: "gpt-5",
-    name: "ChatGPT 5",
+    name: "GPT 5",
     description: "ChatGPT 5 for general assistance",
   },
 ]
