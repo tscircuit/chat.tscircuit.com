@@ -56,7 +56,11 @@ export function Chat({
     },
   })
 
-  const { data: votes } = useSWR<Array<Vote>>(`/api/vote?chatId=${id}`, fetcher)
+  // Only fetch votes for authenticated users (readonly users can't vote anyway)
+  const { data: votes } = useSWR<Array<Vote>>(
+    !isReadonly ? `/api/vote?chatId=${id}` : null,
+    fetcher,
+  )
 
   const [attachments, setAttachments] = useState<Array<Attachment>>([])
   const isBlockVisible = useBlockSelector((state) => state.isVisible)

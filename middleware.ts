@@ -53,6 +53,11 @@ export function middleware(request: NextRequest) {
   }
 
   if (pathname.startsWith("/api/")) {
+    // Allow public read access to documents for shared chats
+    if (pathname.startsWith("/api/document") && request.method === "GET") {
+      return NextResponse.next()
+    }
+
     if (!sessionToken) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
