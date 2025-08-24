@@ -1,9 +1,9 @@
-'use client';
+"use client"
 
-import { BlockKind } from './block';
+import { BlockKind } from "./block"
 
 export const DocumentSkeleton = ({ blockKind }: { blockKind: BlockKind }) => {
-  return blockKind === 'image' ? (
+  return blockKind === "image" ? (
     <div className="flex flex-col gap-4 w-full justify-center items-center h-[calc(100dvh-60px)]">
       <div className="animate-pulse rounded-lg bg-muted-foreground/20 size-96" />
     </div>
@@ -17,8 +17,8 @@ export const DocumentSkeleton = ({ blockKind }: { blockKind: BlockKind }) => {
       <div className="animate-pulse rounded-lg h-8 bg-muted-foreground/20 w-52" />
       <div className="animate-pulse rounded-lg h-5 bg-muted-foreground/20 w-2/3" />
     </div>
-  );
-};
+  )
+}
 
 export const InlineDocumentSkeleton = () => {
   return (
@@ -31,5 +31,5 @@ export const InlineDocumentSkeleton = () => {
       <div className="animate-pulse rounded-lg h-4 bg-muted-foreground/20 w-36" />
       <div className="animate-pulse rounded-lg h-4 bg-muted-foreground/20 w-64" />
     </div>
-  );
-};
+  )
+}

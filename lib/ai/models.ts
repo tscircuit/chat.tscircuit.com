@@ -23,7 +23,10 @@ export const myProvider = customProvider({
       middleware: [],
     }),
     "gpt-5": wrapLanguageModel({ model: openai("gpt-5"), middleware: [] }),
-    "gpt-5-mini": wrapLanguageModel({ model: openai("gpt-5-mini"), middleware: [] }),
+    "gpt-5-mini": wrapLanguageModel({
+      model: openai("gpt-5-mini"),
+      middleware: [],
+    }),
   },
   imageModels: {
     // 'small-model': openai.image('dall-e-2'),

@@ -1,20 +1,20 @@
-'use client';
+"use client"
 
-import { useState } from 'react';
-import { ChevronDownIcon, LoaderIcon } from './icons';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Markdown } from './markdown';
+import { useState } from "react"
+import { ChevronDownIcon, LoaderIcon } from "./icons"
+import { motion, AnimatePresence } from "framer-motion"
+import { Markdown } from "./markdown"
 
 interface MessageReasoningProps {
-  isLoading: boolean;
-  reasoning: string;
+  isLoading: boolean
+  reasoning: string
 }
 
 export function MessageReasoning({
   isLoading,
   reasoning,
 }: MessageReasoningProps) {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(true)
 
   const variants = {
     collapsed: {
@@ -24,12 +24,12 @@ export function MessageReasoning({
       marginBottom: 0,
     },
     expanded: {
-      height: 'auto',
+      height: "auto",
       opacity: 1,
-      marginTop: '1rem',
-      marginBottom: '0.5rem',
+      marginTop: "1rem",
+      marginBottom: "0.5rem",
     },
-  };
+  }
 
   return (
     <div className="flex flex-col">
@@ -46,7 +46,7 @@ export function MessageReasoning({
           <div
             className="cursor-pointer"
             onClick={() => {
-              setIsExpanded(!isExpanded);
+              setIsExpanded(!isExpanded)
             }}
           >
             <ChevronDownIcon />
@@ -62,8 +62,8 @@ export function MessageReasoning({
             animate="expanded"
             exit="collapsed"
             variants={variants}
-            transition={{ duration: 0.2, ease: 'easeInOut' }}
-            style={{ overflow: 'hidden' }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            style={{ overflow: "hidden" }}
             className="pl-4 text-zinc-600 dark:text-zinc-400 border-l flex flex-col gap-4"
           >
             <Markdown>{reasoning}</Markdown>
@@ -71,5 +71,5 @@ export function MessageReasoning({
         )}
       </AnimatePresence>
     </div>
-  );
+  )
 }

@@ -1,15 +1,15 @@
-'use client';
+"use client"
 
-import useSWR from 'swr';
-import { UIBlock } from '@/components/block';
-import { useCallback, useMemo } from 'react';
+import useSWR from "swr"
+import { UIBlock } from "@/components/block"
+import { useCallback, useMemo } from "react"
 
 export const initialBlockData: UIBlock = {
-  documentId: 'init',
-  content: '',
-  kind: 'text',
-  title: '',
-  status: 'idle',
+  documentId: "init",
+  content: "",
+  kind: "text",
+  title: "",
+  status: "idle",
   isVisible: false,
   boundingBox: {
     top: 0,
@@ -17,51 +17,51 @@ export const initialBlockData: UIBlock = {
     width: 0,
     height: 0,
   },
-};
+}
 
-type Selector<T> = (state: UIBlock) => T;
+type Selector<T> = (state: UIBlock) => T
 
 export function useBlockSelector<Selected>(selector: Selector<Selected>) {
-  const { data: localBlock } = useSWR<UIBlock>('block', null, {
+  const { data: localBlock } = useSWR<UIBlock>("block", null, {
     fallbackData: initialBlockData,
-  });
+  })
 
   const selectedValue = useMemo(() => {
-    if (!localBlock) return selector(initialBlockData);
-    return selector(localBlock);
-  }, [localBlock, selector]);
+    if (!localBlock) return selector(initialBlockData)
+    return selector(localBlock)
+  }, [localBlock, selector])
 
-  return selectedValue;
+  return selectedValue
 }
 
 export function useBlock() {
   const { data: localBlock, mutate: setLocalBlock } = useSWR<UIBlock>(
-    'block',
+    "block",
     null,
     {
       fallbackData: initialBlockData,
     },
-  );
+  )
 
   const block = useMemo(() => {
-    if (!localBlock) return initialBlockData;
-    return localBlock;
-  }, [localBlock]);
+    if (!localBlock) return initialBlockData
+    return localBlock
+  }, [localBlock])
 
   const setBlock = useCallback(
     (updaterFn: UIBlock | ((currentBlock: UIBlock) => UIBlock)) => {
       setLocalBlock((currentBlock) => {
-        const blockToUpdate = currentBlock || initialBlockData;
+        const blockToUpdate = currentBlock || initialBlockData
 
-        if (typeof updaterFn === 'function') {
-          return updaterFn(blockToUpdate);
+        if (typeof updaterFn === "function") {
+          return updaterFn(blockToUpdate)
         }
 
-        return updaterFn;
-      });
+        return updaterFn
+      })
     },
     [setLocalBlock],
-  );
+  )
 
   const { data: localBlockMetadata, mutate: setLocalBlockMetadata } =
     useSWR<any>(
@@ -70,7 +70,7 @@ export function useBlock() {
       {
         fallbackData: null,
       },
-    );
+    )
 
   return useMemo(
     () => ({
@@ -80,5 +80,5 @@ export function useBlock() {
       setMetadata: setLocalBlockMetadata,
     }),
     [block, setBlock, localBlockMetadata, setLocalBlockMetadata],
-  );
+  )
 }

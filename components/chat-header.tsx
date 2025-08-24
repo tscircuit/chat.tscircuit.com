@@ -1,17 +1,17 @@
-'use client';
+"use client"
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useWindowSize } from 'usehooks-ts';
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useWindowSize } from "usehooks-ts"
 
-import { ModelSelector } from '@/components/model-selector';
-import { SidebarToggle } from '@/components/sidebar-toggle';
-import { Button } from '@/components/ui/button';
-import { GitHubIcon, PlusIcon, VercelIcon } from './icons';
-import { useSidebar } from './ui/sidebar';
-import { memo } from 'react';
-import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
-import { VisibilityType, VisibilitySelector } from './visibility-selector';
+import { ModelSelector } from "@/components/model-selector"
+import { SidebarToggle } from "@/components/sidebar-toggle"
+import { Button } from "@/components/ui/button"
+import { GitHubIcon, PlusIcon, VercelIcon } from "./icons"
+import { useSidebar } from "./ui/sidebar"
+import { memo } from "react"
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip"
+import { VisibilityType, VisibilitySelector } from "./visibility-selector"
 
 function PureChatHeader({
   chatId,
@@ -19,15 +19,15 @@ function PureChatHeader({
   selectedVisibilityType,
   isReadonly,
 }: {
-  chatId: string;
-  selectedModelId: string;
-  selectedVisibilityType: VisibilityType;
-  isReadonly: boolean;
+  chatId: string
+  selectedModelId: string
+  selectedVisibilityType: VisibilityType
+  isReadonly: boolean
 }) {
-  const router = useRouter();
-  const { open } = useSidebar();
+  const router = useRouter()
+  const { open } = useSidebar()
 
-  const { width: windowWidth } = useWindowSize();
+  const { width: windowWidth } = useWindowSize()
 
   return (
     <header className="flex sticky top-0 bg-background py-1.5 items-center px-2 md:px-2 gap-2 shadow-[0_1px_2px_rgba(0,0,0,0.05)] border-b-gray-200 border-b">
@@ -40,8 +40,8 @@ function PureChatHeader({
               variant="outline"
               className="order-2 md:order-1 md:px-2 px-2 md:h-fit ml-auto md:ml-0"
               onClick={() => {
-                router.push('/');
-                router.refresh();
+                router.push("/")
+                router.refresh()
               }}
             >
               <PlusIcon />
@@ -68,34 +68,28 @@ function PureChatHeader({
       )}
 
       <div className="flex flex-row gap-2 order-4 justify-end md:ml-auto">
-      <Button
-        className="bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-zinc-50 dark:text-zinc-900 hidden md:flex py-1.5 px-2 h-fit md:h-[34px]"
-        asChild
-      >
-        <Link
-          href="https://docs.tscircuit.com"
-          target="_blank"
+        <Button
+          className="bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-zinc-50 dark:text-zinc-900 hidden md:flex py-1.5 px-2 h-fit md:h-[34px]"
+          asChild
         >
-          Docs
-        </Link>
-      </Button>
-      <Button
-        className="bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-zinc-50 dark:text-zinc-900 hidden md:flex py-1.5 px-2 h-fit md:h-[34px]"
-        asChild
-      >
-        <Link
-          href="https://github.com/tscircuit/tscircuit"
-          target="_blank"
+          <Link href="https://docs.tscircuit.com" target="_blank">
+            Docs
+          </Link>
+        </Button>
+        <Button
+          className="bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-zinc-50 dark:text-zinc-900 hidden md:flex py-1.5 px-2 h-fit md:h-[34px]"
+          asChild
         >
-          <GitHubIcon size={16} />
-          GitHub
+          <Link href="https://github.com/tscircuit/tscircuit" target="_blank">
+            <GitHubIcon size={16} />
+            GitHub
           </Link>
         </Button>
       </div>
     </header>
-  );
+  )
 }
 
 export const ChatHeader = memo(PureChatHeader, (prevProps, nextProps) => {
-  return prevProps.selectedModelId === nextProps.selectedModelId;
-});
+  return prevProps.selectedModelId === nextProps.selectedModelId
+})

@@ -1,24 +1,24 @@
-import type { ChatRequestOptions, Message } from 'ai';
-import { PreviewMessage, ThinkingMessage } from './message';
-import { useScrollToBottom } from './use-scroll-to-bottom';
-import { Overview } from './overview';
-import { memo } from 'react';
-import type { Vote } from '@/lib/db/schema';
-import equal from 'fast-deep-equal';
+import type { ChatRequestOptions, Message } from "ai"
+import { PreviewMessage, ThinkingMessage } from "./message"
+import { useScrollToBottom } from "./use-scroll-to-bottom"
+import { Overview } from "./overview"
+import { memo } from "react"
+import type { Vote } from "@/lib/db/schema"
+import equal from "fast-deep-equal"
 
 interface MessagesProps {
-  chatId: string;
-  isLoading: boolean;
-  votes: Array<Vote> | undefined;
-  messages: Array<Message>;
+  chatId: string
+  isLoading: boolean
+  votes: Array<Vote> | undefined
+  messages: Array<Message>
   setMessages: (
     messages: Message[] | ((messages: Message[]) => Message[]),
-  ) => void;
+  ) => void
   reload: (
     chatRequestOptions?: ChatRequestOptions,
-  ) => Promise<string | null | undefined>;
-  isReadonly: boolean;
-  isBlockVisible: boolean;
+  ) => Promise<string | null | undefined>
+  isReadonly: boolean
+  isBlockVisible: boolean
 }
 
 function PureMessages({
@@ -31,7 +31,7 @@ function PureMessages({
   isReadonly,
 }: MessagesProps) {
   const [messagesContainerRef, messagesEndRef] =
-    useScrollToBottom<HTMLDivElement>();
+    useScrollToBottom<HTMLDivElement>()
 
   return (
     <div
@@ -59,24 +59,24 @@ function PureMessages({
 
       {isLoading &&
         messages.length > 0 &&
-        messages[messages.length - 1].role === 'user' && <ThinkingMessage />}
+        messages[messages.length - 1].role === "user" && <ThinkingMessage />}
 
       <div
         ref={messagesEndRef}
         className="shrink-0 min-w-[24px] min-h-[24px]"
       />
     </div>
-  );
+  )
 }
 
 export const Messages = memo(PureMessages, (prevProps, nextProps) => {
-  if (prevProps.isBlockVisible && nextProps.isBlockVisible) return true;
+  if (prevProps.isBlockVisible && nextProps.isBlockVisible) return true
 
-  if (prevProps.isLoading !== nextProps.isLoading) return false;
-  if (prevProps.isLoading && nextProps.isLoading) return false;
-  if (prevProps.messages.length !== nextProps.messages.length) return false;
-  if (!equal(prevProps.messages, nextProps.messages)) return false;
-  if (!equal(prevProps.votes, nextProps.votes)) return false;
+  if (prevProps.isLoading !== nextProps.isLoading) return false
+  if (prevProps.isLoading && nextProps.isLoading) return false
+  if (prevProps.messages.length !== nextProps.messages.length) return false
+  if (!equal(prevProps.messages, nextProps.messages)) return false
+  if (!equal(prevProps.votes, nextProps.votes)) return false
 
-  return true;
-});
+  return true
+})
