@@ -1,22 +1,22 @@
-'use client';
+"use client"
 
-import { ChatRequestOptions, Message } from 'ai';
-import { Button } from './ui/button';
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
-import { Textarea } from './ui/textarea';
-import { deleteTrailingMessages } from '@/app/(chat)/actions';
-import { toast } from 'sonner';
+import { ChatRequestOptions, Message } from "ai"
+import { Button } from "./ui/button"
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react"
+import { Textarea } from "./ui/textarea"
+import { deleteTrailingMessages } from "@/app/(chat)/actions"
+import { toast } from "sonner"
 
 export type MessageEditorProps = {
-  message: Message;
-  setMode: Dispatch<SetStateAction<'view' | 'edit'>>;
+  message: Message
+  setMode: Dispatch<SetStateAction<"view" | "edit">>
   setMessages: (
     messages: Message[] | ((messages: Message[]) => Message[]),
-  ) => void;
+  ) => void
   reload: (
     chatRequestOptions?: ChatRequestOptions,
-  ) => Promise<string | null | undefined>;
-};
+  ) => Promise<string | null | undefined>
+}
 
 export function MessageEditor({
   message,
@@ -24,28 +24,28 @@ export function MessageEditor({
   setMessages,
   reload,
 }: MessageEditorProps) {
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
-  const [draftContent, setDraftContent] = useState<string>(message.content);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [draftContent, setDraftContent] = useState<string>(message.content)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
     if (textareaRef.current) {
-      adjustHeight();
+      adjustHeight()
     }
-  }, []);
+  }, [])
 
   const adjustHeight = () => {
     if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight + 2}px`;
+      textareaRef.current.style.height = "auto"
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight + 2}px`
     }
-  };
+  }
 
   const handleInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setDraftContent(event.target.value);
-    adjustHeight();
-  };
+    setDraftContent(event.target.value)
+    adjustHeight()
+  }
 
   return (
     <div className="flex flex-col gap-2 w-full">
@@ -61,7 +61,7 @@ export function MessageEditor({
           variant="outline"
           className="h-fit py-2 px-3"
           onClick={() => {
-            setMode('view');
+            setMode("view")
           }}
         >
           Cancel
@@ -71,34 +71,34 @@ export function MessageEditor({
           className="h-fit py-2 px-3"
           disabled={isSubmitting}
           onClick={async () => {
-            setIsSubmitting(true);
+            setIsSubmitting(true)
 
             await deleteTrailingMessages({
               id: message.id,
-            });
+            })
 
             setMessages((messages) => {
-              const index = messages.findIndex((m) => m.id === message.id);
+              const index = messages.findIndex((m) => m.id === message.id)
 
               if (index !== -1) {
                 const updatedMessage = {
                   ...message,
                   content: draftContent,
-                };
+                }
 
-                return [...messages.slice(0, index), updatedMessage];
+                return [...messages.slice(0, index), updatedMessage]
               }
 
-              return messages;
-            });
+              return messages
+            })
 
-            setMode('view');
-            reload();
+            setMode("view")
+            reload()
           }}
         >
-          {isSubmitting ? 'Sending...' : 'Send'}
+          {isSubmitting ? "Sending..." : "Send"}
         </Button>
       </div>
     </div>
-  );
+  )
 }

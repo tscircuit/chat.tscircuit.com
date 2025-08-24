@@ -4,19 +4,20 @@ import { getOrCreateGithubUser, getUser } from "@/lib/db/queries"
 import type { User } from "@/lib/db/schema"
 
 // Secret for signing JWT tokens - should be environment variable in production
-const JWT_SECRET = process.env.AUTH_SECRET || 
-  (process.env.NODE_ENV === "production" 
+const JWT_SECRET =
+  process.env.AUTH_SECRET ||
+  (process.env.NODE_ENV === "production"
     ? "production_missing_secret"
     : "dev_secret_do_not_use_in_production")
 
 export async function GET(request: NextRequest) {
   // Get session token from various sources
   const sessionToken = getSessionToken(request)
-  
+
   if (!sessionToken) {
     console.error("No session token found in callback URL or cookies")
     return NextResponse.redirect(
-      new URL("/login?error=missing_token", request.url)
+      new URL("/login?error=missing_token", request.url),
     )
   }
 
@@ -27,7 +28,7 @@ export async function GET(request: NextRequest) {
   } catch (tokenError) {
     console.error("Failed to decode token:", tokenError)
     return NextResponse.redirect(
-      new URL("/login?error=invalid_token", request.url)
+      new URL("/login?error=invalid_token", request.url),
     )
   }
 
@@ -39,14 +40,14 @@ export async function GET(request: NextRequest) {
   if (!github_username) {
     console.error("No github_username in decoded token")
     return NextResponse.redirect(
-      new URL("/login?error=missing_github_username", request.url)
+      new URL("/login?error=missing_github_username", request.url),
     )
   }
 
   if (!email) {
     console.error("No email in decoded token")
     return NextResponse.redirect(
-      new URL("/login?error=missing_email", request.url)
+      new URL("/login?error=missing_email", request.url),
     )
   }
 
@@ -55,7 +56,7 @@ export async function GET(request: NextRequest) {
   try {
     // First try to find user by email
     const existingUsers = await getUser({ email })
-    
+
     if (existingUsers && existingUsers.length > 0) {
       user = existingUsers[0]
     } else {
@@ -66,10 +67,10 @@ export async function GET(request: NextRequest) {
     console.error("Failed to get or create user:", error)
     console.error(
       "Error details:",
-      error instanceof Error ? error.message : String(error)
+      error instanceof Error ? error.message : String(error),
     )
     return NextResponse.redirect(
-      new URL("/login?error=user_creation_failed", request.url)
+      new URL("/login?error=user_creation_failed", request.url),
     )
   }
 
@@ -92,7 +93,7 @@ export async function GET(request: NextRequest) {
   } catch (jwtError) {
     console.error("Failed to create session token:", jwtError)
     return NextResponse.redirect(
-      new URL("/login?error=session_creation_failed", request.url)
+      new URL("/login?error=session_creation_failed", request.url),
     )
   }
 
@@ -132,7 +133,7 @@ function getSessionToken(request: NextRequest): string | null {
       if (email) {
         // Async operation wrapped in try/catch but not awaited
         // as we're just checking the cookie, not using the result here
-        (async () => {
+        ;(async () => {
           try {
             const existingUsers = await getUser({ email })
             if (!existingUsers || existingUsers.length === 0) {

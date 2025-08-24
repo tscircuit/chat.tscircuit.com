@@ -1,45 +1,45 @@
-import { codeDocumentHandler } from '@/blocks/code/server';
-import { imageDocumentHandler } from '@/blocks/image/server';
-import { sheetDocumentHandler } from '@/blocks/sheet/server';
-import { textDocumentHandler } from '@/blocks/text/server';
-import { BlockKind } from '@/components/block';
-import { DataStreamWriter } from 'ai';
-import { Document } from '../db/schema';
-import { saveDocument } from '../db/queries';
-import { Session } from '@/app/(auth)/server-auth';
+import { codeDocumentHandler } from "@/blocks/code/server"
+import { imageDocumentHandler } from "@/blocks/image/server"
+import { sheetDocumentHandler } from "@/blocks/sheet/server"
+import { textDocumentHandler } from "@/blocks/text/server"
+import { BlockKind } from "@/components/block"
+import { DataStreamWriter } from "ai"
+import { Document } from "../db/schema"
+import { saveDocument } from "../db/queries"
+import { Session } from "@/app/(auth)/server-auth"
 
 export interface SaveDocumentProps {
-  id: string;
-  title: string;
-  kind: BlockKind;
-  content: string;
-  userId: string;
+  id: string
+  title: string
+  kind: BlockKind
+  content: string
+  userId: string
 }
 
 export interface CreateDocumentCallbackProps {
-  id: string;
-  title: string;
-  dataStream: DataStreamWriter;
-  session: Session;
+  id: string
+  title: string
+  dataStream: DataStreamWriter
+  session: Session
 }
 
 export interface UpdateDocumentCallbackProps {
-  document: Document;
-  description: string;
-  dataStream: DataStreamWriter;
-  session: Session;
+  document: Document
+  description: string
+  dataStream: DataStreamWriter
+  session: Session
 }
 
 export interface DocumentHandler<T = BlockKind> {
-  kind: T;
-  onCreateDocument: (args: CreateDocumentCallbackProps) => Promise<void>;
-  onUpdateDocument: (args: UpdateDocumentCallbackProps) => Promise<void>;
+  kind: T
+  onCreateDocument: (args: CreateDocumentCallbackProps) => Promise<void>
+  onUpdateDocument: (args: UpdateDocumentCallbackProps) => Promise<void>
 }
 
 export function createDocumentHandler<T extends BlockKind>(config: {
-  kind: T;
-  onCreateDocument: (params: CreateDocumentCallbackProps) => Promise<string>;
-  onUpdateDocument: (params: UpdateDocumentCallbackProps) => Promise<string>;
+  kind: T
+  onCreateDocument: (params: CreateDocumentCallbackProps) => Promise<string>
+  onUpdateDocument: (params: UpdateDocumentCallbackProps) => Promise<string>
 }): DocumentHandler<T> {
   return {
     kind: config.kind,
@@ -49,7 +49,7 @@ export function createDocumentHandler<T extends BlockKind>(config: {
         title: args.title,
         dataStream: args.dataStream,
         session: args.session,
-      });
+      })
 
       if (args.session?.user?.id) {
         await saveDocument({
@@ -58,10 +58,10 @@ export function createDocumentHandler<T extends BlockKind>(config: {
           content: draftContent,
           kind: config.kind,
           userId: args.session.user.id,
-        });
+        })
       }
 
-      return;
+      return
     },
     onUpdateDocument: async (args: UpdateDocumentCallbackProps) => {
       const draftContent = await config.onUpdateDocument({
@@ -69,7 +69,7 @@ export function createDocumentHandler<T extends BlockKind>(config: {
         description: args.description,
         dataStream: args.dataStream,
         session: args.session,
-      });
+      })
 
       if (args.session?.user?.id) {
         await saveDocument({
@@ -78,12 +78,12 @@ export function createDocumentHandler<T extends BlockKind>(config: {
           content: draftContent,
           kind: config.kind,
           userId: args.session.user.id,
-        });
+        })
       }
 
-      return;
+      return
     },
-  };
+  }
 }
 
 /*
@@ -94,6 +94,6 @@ export const documentHandlersByBlockKind: Array<DocumentHandler> = [
   codeDocumentHandler,
   imageDocumentHandler,
   sheetDocumentHandler,
-];
+]
 
-export const blockKinds = ['text', 'code', 'image', 'sheet'] as const;
+export const blockKinds = ["text", "code", "image", "sheet"] as const

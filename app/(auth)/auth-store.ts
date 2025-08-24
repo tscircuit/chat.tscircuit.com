@@ -77,7 +77,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         if (decoded && decoded.exp * 1000 > Date.now()) {
           // Store token in cookie to ensure server and client stay in sync
           document.cookie = `session_token=${sessionToken}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
-          
+
           // Set user data from token - prioritize id over account_id
           set({
             user: {
@@ -95,13 +95,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       // If no token in URL, try to get it from cookies
       const cookieToken = document.cookie
         .split("; ")
-        .find(row => row.startsWith("session_token="))
+        .find((row) => row.startsWith("session_token="))
         ?.split("=")[1]
-        
+
       if (cookieToken) {
         try {
           const decoded = jose.decodeJwt<SessionData>(cookieToken)
-          
+
           // Check if token is valid and not expired
           if (decoded && decoded.exp * 1000 > Date.now()) {
             set({

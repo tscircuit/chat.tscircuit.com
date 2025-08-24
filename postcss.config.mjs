@@ -2,8 +2,8 @@
 const config = {
   plugins: {
     tailwindcss: {},
-    'tailwindcss/nesting': {},
+    "tailwindcss/nesting": {},
   },
-};
+}
 
-export default config;
+export default config

@@ -1,38 +1,38 @@
-'use client';
+"use client"
 
-import { AnimatePresence, motion } from 'framer-motion';
-import { useState } from 'react';
-import { useWindowSize } from 'usehooks-ts';
+import { AnimatePresence, motion } from "framer-motion"
+import { useState } from "react"
+import { useWindowSize } from "usehooks-ts"
 
-import type { UISuggestion } from '@/lib/editor/suggestions';
+import type { UISuggestion } from "@/lib/editor/suggestions"
 
-import { CrossIcon, MessageIcon } from './icons';
-import { Button } from './ui/button';
-import { cn } from '@/lib/utils';
-import { BlockKind } from './block';
+import { CrossIcon, MessageIcon } from "./icons"
+import { Button } from "./ui/button"
+import { cn } from "@/lib/utils"
+import { BlockKind } from "./block"
 
 export const Suggestion = ({
   suggestion,
   onApply,
   blockKind,
 }: {
-  suggestion: UISuggestion;
-  onApply: () => void;
-  blockKind: BlockKind;
+  suggestion: UISuggestion
+  onApply: () => void
+  blockKind: BlockKind
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const { width: windowWidth } = useWindowSize();
+  const [isExpanded, setIsExpanded] = useState(false)
+  const { width: windowWidth } = useWindowSize()
 
   return (
     <AnimatePresence>
       {!isExpanded ? (
         <motion.div
-          className={cn('cursor-pointer text-muted-foreground p-1', {
-            'absolute -right-8': blockKind === 'text',
-            'sticky top-0 right-4': blockKind === 'code',
+          className={cn("cursor-pointer text-muted-foreground p-1", {
+            "absolute -right-8": blockKind === "text",
+            "sticky top-0 right-4": blockKind === "code",
           })}
           onClick={() => {
-            setIsExpanded(true);
+            setIsExpanded(true)
           }}
           whileHover={{ scale: 1.1 }}
         >
@@ -42,7 +42,7 @@ export const Suggestion = ({
         <motion.div
           key={suggestion.id}
           className="absolute bg-background p-3 flex flex-col gap-3 rounded-2xl border text-sm w-56 shadow-xl z-50 -right-12 md:-right-16 font-sans"
-          transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+          transition={{ type: "spring", stiffness: 500, damping: 30 }}
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: -20 }}
           exit={{ opacity: 0, y: -10 }}
@@ -57,7 +57,7 @@ export const Suggestion = ({
               type="button"
               className="text-xs text-gray-500 cursor-pointer"
               onClick={() => {
-                setIsExpanded(false);
+                setIsExpanded(false)
               }}
             >
               <CrossIcon size={12} />
@@ -74,5 +74,5 @@ export const Suggestion = ({
         </motion.div>
       )}
     </AnimatePresence>
-  );
-};
+  )
+}

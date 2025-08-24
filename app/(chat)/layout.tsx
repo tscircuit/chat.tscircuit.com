@@ -1,20 +1,20 @@
-import { cookies } from 'next/headers';
+import { cookies } from "next/headers"
 
-import { AppSidebar } from '@/components/app-sidebar';
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { AppSidebar } from "@/components/app-sidebar"
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 
-import Script from 'next/script';
-import { getSession } from '@/app/(auth)/server-auth';
+import Script from "next/script"
+import { getSession } from "@/app/(auth)/server-auth"
 
-export const experimental_ppr = true;
+export const experimental_ppr = true
 
 export default async function Layout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
-  const [session, cookieStore] = await Promise.all([getSession(), cookies()]);
-  const isCollapsed = cookieStore.get('sidebar:state')?.value !== 'true';
+  const [session, cookieStore] = await Promise.all([getSession(), cookies()])
+  const isCollapsed = cookieStore.get("sidebar:state")?.value !== "true"
 
   return (
     <>
@@ -27,5 +27,5 @@ export default async function Layout({
         <SidebarInset>{children}</SidebarInset>
       </SidebarProvider>
     </>
-  );
+  )
 }

@@ -32,7 +32,11 @@ export const maxDuration = 300 // enable fluid computing
 export async function POST(request: Request) {
   try {
     // Parse request body
-    let requestData: { id: string; messages: Array<Message>; selectedChatModel: string }
+    let requestData: {
+      id: string
+      messages: Array<Message>
+      selectedChatModel: string
+    }
     try {
       requestData = await request.json()
     } catch (error) {
@@ -59,14 +63,19 @@ export async function POST(request: Request) {
       const chat = await getChatById({ id })
       if (!chat) {
         console.log("Generating title for new chat...")
-        const title = await generateTitleFromUserMessage({ message: userMessage })
+        const title = await generateTitleFromUserMessage({
+          message: userMessage,
+        })
         console.log("Generated title:", title)
         await saveChat({ id, userId: session.user.id, title })
         console.log("Saved new chat with title")
       }
     } catch (error) {
       console.error("Failed to handle chat creation:", error)
-      console.error("Error details:", error instanceof Error ? error.message : String(error))
+      console.error(
+        "Error details:",
+        error instanceof Error ? error.message : String(error),
+      )
       return new Response("Failed to create or retrieve chat", { status: 500 })
     }
 
@@ -155,9 +164,12 @@ export async function POST(request: Request) {
     })
   } catch (error) {
     console.error("Unexpected error in POST handler:", error)
-    return new Response(`Server error: ${error instanceof Error ? error.message : "Unknown error"}`, { 
-      status: 500 
-    })
+    return new Response(
+      `Server error: ${error instanceof Error ? error.message : "Unknown error"}`,
+      {
+        status: 500,
+      },
+    )
   }
 }
 
