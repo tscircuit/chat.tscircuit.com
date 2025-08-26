@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { AuthProvider } from "@/app/(auth)/auth-context"
 
 import "./globals.css"
+import { Check, CheckCheckIcon, Loader2 } from "lucide-react"
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://chat.tscircuit.com"),
@@ -54,7 +55,7 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body className="antialiased">
+      <body className="antialiased overflow-x-hidden">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -62,7 +63,15 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
-            <Toaster position="top-center" />
+            <Toaster
+              icons={{
+                loading: (
+                  <Loader2 className="w-5 h-5 text-background animate-spin" />
+                ),
+                success: <CheckCheckIcon className="w-5 h-5 text-background" />,
+              }}
+              position="top-center"
+            />
             {children}
           </AuthProvider>
         </ThemeProvider>
