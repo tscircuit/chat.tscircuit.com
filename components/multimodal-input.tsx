@@ -26,6 +26,7 @@ import { SuggestedActions } from "./suggested-actions"
 import equal from "fast-deep-equal"
 import TscircuitPackageSelector from "./tscircuit-package-selector"
 import { loadTscircuitPackageAsAttachment } from "@/lib/tscircuit/load-tscircuit-package-as-attachement"
+import { CheckCheckIcon, Loader2 } from "lucide-react"
 
 function PureMultimodalInput({
   chatId,
@@ -215,16 +216,39 @@ function PureMultimodalInput({
     async (packageName: string) => {
       if (!textareaRef.current) return
 
+      if (attachments.find((a) => a.name === packageName)) {
+        return
+      }
+
       const cursorPos = textareaRef.current.selectionStart
       const textBefore = input.substring(0, cursorPos)
       const textAfter = input.substring(cursorPos)
 
-      const attachment = await loadTscircuitPackageAsAttachment(packageName)
+      // Show loading toast
+      const toastId = toast.loading(`Adding "${packageName}" to your chat`)
 
-      setAttachments((currentAttachments) => [
-        ...currentAttachments,
-        attachment,
-      ])
+      try {
+        const attachment = await loadTscircuitPackageAsAttachment(packageName)
+
+        setAttachments((currentAttachments) => [
+          ...currentAttachments,
+          attachment,
+        ])
+
+        // Success toast
+        toast.success("Package loaded successfully!", {
+          id: toastId,
+          icon: <CheckCheckIcon className="w-5 h-5 text-background" />,
+        })
+      } catch (error) {
+        // Error toast
+        toast.error("Failed to load package", {
+          id: toastId,
+          description:
+            error instanceof Error ? error.message : "Please try again",
+        })
+        console.error("Error loading TSCircuit package:", error)
+      }
 
       // setInput(`${textBefore}@${filename} ${textAfter}`)
       setShowFileSelector(false)
@@ -253,7 +277,7 @@ function PureMultimodalInput({
       />
 
       {(attachments.length > 0 || uploadQueue.length > 0) && (
-        <div className="flex flex-row gap-2 overflow-x-scroll items-end">
+        <div className="flex flex-row gap-2 overflow-x-scroll items-end no-scrollbar">
           {attachments.map((attachment) => (
             <PreviewAttachment key={attachment.url} attachment={attachment} />
           ))}
@@ -275,6 +299,7 @@ function PureMultimodalInput({
       <Textarea
         ref={textareaRef}
         placeholder="Send a message..."
+        name="input"
         value={input}
         onChange={handleInput}
         className={cx(
@@ -282,6 +307,7 @@ function PureMultimodalInput({
           className,
         )}
         rows={2}
+        autoComplete="off"
         autoFocus
         onKeyDown={handleKeyDown}
       />
