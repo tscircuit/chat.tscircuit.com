@@ -9,9 +9,7 @@ import {
   UndoIcon,
 } from "@/components/icons"
 import { toast } from "sonner"
-import { generateUUID } from "@/lib/utils"
 import { TscircuitIframe } from "@/components/TscircuitIframe"
-import { Dialog, DialogContent, DialogTitle } from "@radix-ui/react-dialog"
 import { BottomContentDrawer } from "@/components/bottom-content-drawer"
 // import { RunFrame } from '@tscircuit/runframe/runner';
 

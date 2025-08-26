@@ -9,6 +9,7 @@ export interface TscircuitIframeProps {
 export const TscircuitIframe = (runFrameProps: TscircuitIframeProps) => {
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [isReady, setIsReady] = useState(false)
+  const [iframeHeight, setIframeHeight] = useState(600) // Default height for SSR
 
   console.log(runFrameProps)
   useEffect(() => {
@@ -42,6 +43,14 @@ export const TscircuitIframe = (runFrameProps: TscircuitIframeProps) => {
       )
     }
   }, [runFrameProps])
+
+  // Set iframe height after component mounts to avoid SSR issues
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIframeHeight(Math.min(600, window.innerHeight - 50))
+    }
+  }, [])
+
   return (
     <div>
       <iframe
@@ -53,7 +62,7 @@ export const TscircuitIframe = (runFrameProps: TscircuitIframeProps) => {
         style={{
           overflow: "hidden",
           width: "100%",
-          height: Math.min(600, window.innerHeight - 50),
+          height: iframeHeight,
           border: "none",
           padding: 0,
           margin: 0,
