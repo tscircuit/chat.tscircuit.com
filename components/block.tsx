@@ -449,7 +449,7 @@ function PureBlock({
               />
             </div>
 
-            <div className="dark:bg-muted bg-background h-full overflow-y-scroll !max-w-full items-center">
+            <div className="dark:bg-muted subtle-scrollbar w-full bg-background h-full overflow-y-scroll !max-w-full items-center">
               <blockDefinition.content
                 title={block.title}
                 content={

@@ -3,11 +3,12 @@
 import { EditorView } from "@codemirror/view"
 import { EditorState, Transaction } from "@codemirror/state"
 import { javascript } from "@codemirror/lang-javascript"
-import { oneDark } from "@codemirror/theme-one-dark"
 import { basicSetup } from "codemirror"
-import React, { memo, useEffect, useRef } from "react"
+import React, { memo, useEffect, useRef, useMemo } from "react"
 import { Suggestion } from "@/lib/db/schema"
-
+import { githubDark } from "@fsegurai/codemirror-theme-github-dark"
+import { githubLight } from "@fsegurai/codemirror-theme-github-light"
+import { useTheme } from "next-themes"
 type EditorProps = {
   content: string
   onSaveContent: (updatedContent: string, debounce: boolean) => void
@@ -20,12 +21,30 @@ type EditorProps = {
 function PureCodeEditor({ content, onSaveContent, status }: EditorProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const editorRef = useRef<EditorView | null>(null)
+  const { theme } = useTheme()
 
+  const currentTheme = useMemo(() => {
+    return theme === "dark" ? githubDark : githubLight
+  }, [theme])
+
+  const editorTheme = useMemo(() => {
+    return EditorView.theme({
+      "&": { height: "auto" },
+      ".cm-content": { padding: "12px" },
+      ".cm-focused": { outline: "none" },
+      ".cm-scroller": { fontFamily: "inherit" },
+    })
+  }, [])
   useEffect(() => {
     if (containerRef.current && !editorRef.current) {
       const startState = EditorState.create({
         doc: content,
-        extensions: [basicSetup, javascript(), oneDark],
+        extensions: [
+          basicSetup,
+          javascript({ jsx: true }),
+          currentTheme,
+          editorTheme,
+        ],
       })
 
       editorRef.current = new EditorView({
@@ -61,13 +80,19 @@ function PureCodeEditor({ content, onSaveContent, status }: EditorProps) {
 
       const newState = EditorState.create({
         doc: editorRef.current.state.doc,
-        extensions: [basicSetup, javascript(), oneDark, updateListener],
+        extensions: [
+          basicSetup,
+          javascript({ jsx: true }),
+          currentTheme,
+          updateListener,
+          editorTheme,
+        ],
         selection: currentSelection,
       })
 
       editorRef.current.setState(newState)
     }
-  }, [onSaveContent])
+  }, [onSaveContent, currentTheme, editorTheme])
 
   useEffect(() => {
     if (editorRef.current && content) {
@@ -90,7 +115,7 @@ function PureCodeEditor({ content, onSaveContent, status }: EditorProps) {
 
   return (
     <div
-      className="relative not-prose w-full pb-[calc(80dvh)] text-sm no-scrollbar"
+      className="relative not-prose w-full text-sm no-scrollbar h-full overflow-auto"
       ref={containerRef}
     />
   )

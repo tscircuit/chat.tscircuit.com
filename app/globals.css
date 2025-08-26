@@ -218,3 +218,19 @@
   background-color: hsl(var(--accent)) !important;
   color: hsl(var(--accent-foreground)) !important;
 }
+
+/* Subtle scrollbar styling for html and body */
+.subtle-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  background-color: transparent;
+}
+
+.subtle-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(215, 215, 215, 0.564);
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.subtle-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(193, 193, 193, 0.455);
+}

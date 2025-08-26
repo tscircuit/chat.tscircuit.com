@@ -232,7 +232,7 @@ const DocumentContent = ({ document }: { document: Document }) => {
   const { block } = useBlock()
 
   const containerClassName = cn(
-    "h-[257px] overflow-y-scroll border rounded-b-2xl dark:bg-muted border-t-0 dark:border-zinc-700",
+    "h-[257px] no-scrollbar overflow-y-scroll border rounded-b-2xl dark:bg-muted border-t-0 dark:border-zinc-700",
     {
       "p-4 sm:px-14 sm:py-16": document.kind === "text",
       "p-0": document.kind === "code",
@@ -254,7 +254,7 @@ const DocumentContent = ({ document }: { document: Document }) => {
         <Editor {...commonProps} onSaveContent={() => {}} />
       ) : document.kind === "code" ? (
         <div className="flex flex-1 relative w-full">
-          <div className="absolute inset-0">
+          <div className="absolute inset-0 h-[80dvh]">
             <CodeEditor {...commonProps} onSaveContent={() => {}} />
           </div>
         </div>

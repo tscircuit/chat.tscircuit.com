@@ -71,6 +71,8 @@
       },
       "devDependencies": {
         "@biomejs/biome": "^1.9.4",
+        "@fsegurai/codemirror-theme-github-dark": "^6.2.2",
+        "@fsegurai/codemirror-theme-github-light": "^6.2.2",
         "@tailwindcss/typography": "^0.5.15",
         "@types/d3-scale": "^4.0.8",
         "@types/node": "^22.8.6",
@@ -247,6 +249,10 @@
     "@floating-ui/react-dom": ["@floating-ui/react-dom@2.1.2", "", { "dependencies": { "@floating-ui/dom": "^1.0.0" }, "peerDependencies": { "react": ">=16.8.0", "react-dom": ">=16.8.0" } }, "sha512-06okr5cgPzMNBy+Ycse2A6udMi4bqwW/zgBF/rwjcNqWkyr82Mcg8b0vjX8OJpZFy/FKjJmw6wV7t44kK6kW7A=="],
 
     "@floating-ui/utils": ["@floating-ui/utils@0.2.9", "", {}, "sha512-MDWhGtE+eHw5JW7lq4qhc5yRLS11ERl1c7Z6Xd0a58DozHES6EnNNwUWbMiG4J9Cgj053Bhk8zvlhFYKVhULwg=="],
+
+    "@fsegurai/codemirror-theme-github-dark": ["@fsegurai/codemirror-theme-github-dark@6.2.2", "", { "peerDependencies": { "@codemirror/language": "^6.0.0", "@codemirror/state": "^6.0.0", "@codemirror/view": "^6.0.0", "@lezer/highlight": "^1.0.0" } }, "sha512-JP+UxyCrqX528oHF4/lJuRFrmjaAAJB+UzKJXIKV2u/hgurjvHyNOs4w9c5Cv5+1ITxyNUP1Zn2gPEGWjB0c6g=="],
+
+    "@fsegurai/codemirror-theme-github-light": ["@fsegurai/codemirror-theme-github-light@6.2.2", "", { "peerDependencies": { "@codemirror/language": "^6.0.0", "@codemirror/state": "^6.0.0", "@codemirror/view": "^6.0.0", "@lezer/highlight": "^1.0.0" } }, "sha512-YQr5MbhMlhRlAQcSCSbet4NDDkMvd5sbUyk9JmM0vfZhQbatvw4c56gNG/54JKGM0kWY5zRWzgLtFuz6D7yEsw=="],
 
     "@humanwhocodes/config-array": ["@humanwhocodes/config-array@0.13.0", "", { "dependencies": { "@humanwhocodes/object-schema": "^2.0.3", "debug": "^4.3.1", "minimatch": "^3.0.5" } }, "sha512-DZLEEqFWQFiyK6h5YIeynKx7JlvCYWL0cImfSRXZ9l4Sg2efkFGTuFf6vzXjK1cq6IYkU+Eg/JizXw+TD2vRNw=="],
 
