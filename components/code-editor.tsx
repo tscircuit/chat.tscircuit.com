@@ -2,7 +2,7 @@
 
 import { EditorView } from "@codemirror/view"
 import { EditorState, Transaction } from "@codemirror/state"
-import { python } from "@codemirror/lang-python"
+import { javascript } from "@codemirror/lang-javascript"
 import { oneDark } from "@codemirror/theme-one-dark"
 import { basicSetup } from "codemirror"
 import React, { memo, useEffect, useRef } from "react"
@@ -25,7 +25,7 @@ function PureCodeEditor({ content, onSaveContent, status }: EditorProps) {
     if (containerRef.current && !editorRef.current) {
       const startState = EditorState.create({
         doc: content,
-        extensions: [basicSetup, python(), oneDark],
+        extensions: [basicSetup, javascript(), oneDark],
       })
 
       editorRef.current = new EditorView({
@@ -40,8 +40,6 @@ function PureCodeEditor({ content, onSaveContent, status }: EditorProps) {
         editorRef.current = null
       }
     }
-    // NOTE: we only want to run this effect once
-    // eslint-disable-next-line
   }, [])
 
   useEffect(() => {
@@ -63,7 +61,7 @@ function PureCodeEditor({ content, onSaveContent, status }: EditorProps) {
 
       const newState = EditorState.create({
         doc: editorRef.current.state.doc,
-        extensions: [basicSetup, python(), oneDark, updateListener],
+        extensions: [basicSetup, javascript(), oneDark, updateListener],
         selection: currentSelection,
       })
 
@@ -92,7 +90,7 @@ function PureCodeEditor({ content, onSaveContent, status }: EditorProps) {
 
   return (
     <div
-      className="relative not-prose w-full pb-[calc(80dvh)] text-sm"
+      className="relative not-prose w-full pb-[calc(80dvh)] text-sm no-scrollbar"
       ref={containerRef}
     />
   )
