@@ -7,11 +7,12 @@ import { useWindowSize } from "usehooks-ts"
 import { ModelSelector } from "@/components/model-selector"
 import { SidebarToggle } from "@/components/sidebar-toggle"
 import { Button } from "@/components/ui/button"
-import { GitHubIcon, PlusIcon, VercelIcon } from "./icons"
+import { PlusIcon } from "./icons"
 import { useSidebar } from "./ui/sidebar"
 import { memo } from "react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip"
 import { VisibilityType, VisibilitySelector } from "./visibility-selector"
+import { BookIcon, Github } from "lucide-react"
 
 function PureChatHeader({
   chatId,
@@ -73,6 +74,7 @@ function PureChatHeader({
           asChild
         >
           <Link href="https://docs.tscircuit.com" target="_blank">
+            <BookIcon size={16} />
             Docs
           </Link>
         </Button>
@@ -81,7 +83,7 @@ function PureChatHeader({
           asChild
         >
           <Link href="https://github.com/tscircuit/tscircuit" target="_blank">
-            <GitHubIcon size={16} />
+            <Github size={16} />
             GitHub
           </Link>
         </Button>
