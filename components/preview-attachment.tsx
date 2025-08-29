@@ -24,8 +24,20 @@ export const PreviewAttachment = ({
 }) => {
   const { name, url, contentType } = attachment
 
+  const handleClick = (e: React.MouseEvent) => {
+    if (e.ctrlKey && name) {
+      e.preventDefault()
+      const packageUrl = `https://tscircuit.com/${name}`
+      window.open(packageUrl, "_blank")
+    }
+  }
+
   return (
-    <div className="group flex flex-col gap-3 transition-all duration-200">
+    <div
+      className="group flex flex-col gap-3 transition-all duration-200 cursor-pointer"
+      onClick={handleClick}
+      title={name ? `Ctrl+click to open ${name} on tscircuit.com` : undefined}
+    >
       <div className="relative w-32 h-20 sm:w-36 sm:h-24 rounded-xl border border-border/50 bg-background/80 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-background/50 to-muted/20" />
 
