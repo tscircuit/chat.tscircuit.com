@@ -75,7 +75,6 @@ function PureMultimodalInput({
       adjustHeight()
     }
   }, [])
-
   const adjustHeight = () => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto"
@@ -211,7 +210,6 @@ function PureMultimodalInput({
     },
     [setFileSelectorTriggerPos, setShowFileSelector, submitForm],
   )
-
   const handleFileSelect = useCallback(
     async (packageName: string) => {
       if (!textareaRef.current) return
@@ -225,7 +223,9 @@ function PureMultimodalInput({
       const textAfter = input.substring(cursorPos)
 
       // Show loading toast
-      const toastId = toast.loading(`Adding "${packageName}" to your chat`)
+      const toastId = toast.loading(`Adding "${packageName}" to your chat`, {
+        icon: <Loader2 className="w-5 h-5 text-black" />,
+      })
 
       try {
         const attachment = await loadTscircuitPackageAsAttachment(packageName)
@@ -238,7 +238,7 @@ function PureMultimodalInput({
         // Success toast
         toast.success("Package loaded successfully!", {
           id: toastId,
-          icon: <CheckCheckIcon className="w-5 h-5 text-background" />,
+          icon: <CheckCheckIcon className="w-5 h-5 text-black" />,
         })
       } catch (error) {
         // Error toast
