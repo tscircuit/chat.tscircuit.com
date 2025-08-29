@@ -21,6 +21,7 @@ export interface CreateDocumentCallbackProps {
   title: string
   dataStream: DataStreamWriter
   session: Session
+  selectedModelId?: string
 }
 
 export interface UpdateDocumentCallbackProps {
@@ -28,6 +29,7 @@ export interface UpdateDocumentCallbackProps {
   description: string
   dataStream: DataStreamWriter
   session: Session
+  selectedModelId?: string
 }
 
 export interface DocumentHandler<T = BlockKind> {
@@ -49,6 +51,7 @@ export function createDocumentHandler<T extends BlockKind>(config: {
         title: args.title,
         dataStream: args.dataStream,
         session: args.session,
+        selectedModelId: args.selectedModelId,
       })
 
       if (args.session?.user?.id) {
@@ -69,6 +72,7 @@ export function createDocumentHandler<T extends BlockKind>(config: {
         description: args.description,
         dataStream: args.dataStream,
         session: args.session,
+        selectedModelId: args.selectedModelId,
       })
 
       if (args.session?.user?.id) {

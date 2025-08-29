@@ -5,11 +5,11 @@ import { updateDocumentPrompt } from "@/lib/ai/prompts/prompts"
 
 export const textDocumentHandler = createDocumentHandler<"text">({
   kind: "text",
-  onCreateDocument: async ({ title, dataStream }) => {
+  onCreateDocument: async ({ title, dataStream, selectedModelId }) => {
     let draftContent = ""
 
     const { fullStream } = streamText({
-      model: myProvider.languageModel("block-model"),
+      model: myProvider.languageModel(selectedModelId ?? "block-model"),
       system:
         "Write about the given topic. Markdown is supported. Use headings wherever appropriate.",
       experimental_transform: smoothStream({ chunking: "word" }),
@@ -34,11 +34,11 @@ export const textDocumentHandler = createDocumentHandler<"text">({
 
     return draftContent
   },
-  onUpdateDocument: async ({ document, description, dataStream }) => {
+  onUpdateDocument: async ({ document, description, dataStream, selectedModelId }) => {
     let draftContent = ""
 
     const { fullStream } = streamText({
-      model: myProvider.languageModel("block-model"),
+      model: myProvider.languageModel(selectedModelId ?? "block-model"),
       system: updateDocumentPrompt(document.content, "text"),
       experimental_transform: smoothStream({ chunking: "word" }),
       prompt: description,
