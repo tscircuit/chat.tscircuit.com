@@ -10,7 +10,11 @@ interface UpdateDocumentProps {
   selectedModelId?: string
 }
 
-export const updateDocument = ({ session, dataStream, selectedModelId }: UpdateDocumentProps) =>
+export const updateDocument = ({
+  session,
+  dataStream,
+  selectedModelId,
+}: UpdateDocumentProps) =>
   tool({
     description: "Update a document with the given description.",
     parameters: z.object({

@@ -39,7 +39,12 @@ export const codeDocumentHandler = createDocumentHandler<"code">({
 
     return draftContent
   },
-  onUpdateDocument: async ({ document, description, dataStream, selectedModelId }) => {
+  onUpdateDocument: async ({
+    document,
+    description,
+    dataStream,
+    selectedModelId,
+  }) => {
     let draftContent = ""
 
     const { fullStream } = streamObject({
