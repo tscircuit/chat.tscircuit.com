@@ -36,8 +36,28 @@ function PureBlockMessages({
   return (
     <div
       ref={messagesContainerRef}
-      className="flex flex-col gap-4 h-full items-center subtle-scrollbar overflow-y-scroll px-4 pt-20"
+      className="flex flex-col gap-2 h-full w-full items-stretch subtle-scrollbar overflow-y-auto overflow-x-hidden px-2 sm:px-3 pt-2 pb-2 text-sm"
+      style={{
+        height: "100%",
+        maxHeight: "100%",
+        minHeight: 0,
+        overflowY: "auto",
+        overflowX: "hidden",
+      }}
     >
+      {messages.length === 0 && (
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center text-muted-foreground">
+            <div className="text-base font-medium mb-2">
+              Start a conversation
+            </div>
+            <div className="text-xs">
+              Ask questions or describe what you'd like to build
+            </div>
+          </div>
+        </div>
+      )}
+
       {messages.map((message, index) => (
         <PreviewMessage
           chatId={chatId}
