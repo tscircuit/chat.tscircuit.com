@@ -103,7 +103,12 @@ export default function TscircuitPackageSelector({
       open={isOpen}
       onOpenChange={() => onClose({ refocusInput: true })}
       title="TSCircuit Package Selector"
+      aria-describedby="package-selector-description"
     >
+      <div id="package-selector-description" className="sr-only">
+        Search and select TSCircuit packages from the registry. Use arrow keys
+        to navigate, Enter to select, and Escape to close.
+      </div>
       <Command
         shouldFilter={false}
         onKeyDown={(e) => {

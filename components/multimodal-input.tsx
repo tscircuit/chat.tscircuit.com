@@ -109,7 +109,15 @@ function PureMultimodalInput({
   }, [input, setLocalStorageInput])
 
   const handleInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInput(event.target.value)
+    const newValue = event.target.value
+    const oldValue = input
+
+    // Check if '@' was just typed (for mobile compatibility)
+    if (newValue.length > oldValue.length && newValue.endsWith("@")) {
+      setShowFileSelector(true)
+    }
+
+    setInput(newValue)
     adjustHeight()
   }
 
@@ -217,14 +225,13 @@ function PureMultimodalInput({
       if (!textareaRef.current) return
 
       if (attachments.find((a) => a.name === packageName)) {
+        setShowFileSelector(false)
+        setTimeout(() => {
+          textareaRef.current?.focus()
+        }, 0)
         return
       }
 
-      const cursorPos = textareaRef.current.selectionStart
-      const textBefore = input.substring(0, cursorPos)
-      const textAfter = input.substring(cursorPos)
-
-      // Show loading toast
       const toastId = toast.loading(`Adding "${packageName}" to your chat`)
 
       try {
@@ -250,13 +257,12 @@ function PureMultimodalInput({
         console.error("Error loading TSCircuit package:", error)
       }
 
-      // setInput(`${textBefore}@${filename} ${textAfter}`)
       setShowFileSelector(false)
       setTimeout(() => {
         textareaRef.current?.focus()
       }, 0)
     },
-    [input, setInput],
+    [attachments, setAttachments],
   )
 
   return (
