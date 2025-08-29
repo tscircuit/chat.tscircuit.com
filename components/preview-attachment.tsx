@@ -5,12 +5,30 @@ import { LoaderIcon } from "./icons"
 const TscircuitPackageImage = ({ name }: { name: string }) => {
   const url = `https://registry-api.tscircuit.com/snippets/images/${name}/pcb.svg`
   return (
-    <div className="size-full rounded-lg overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-950/30 dark:to-indigo-900/30 flex items-center justify-center">
+    <div className="size-full rounded-lg overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-950/30 dark:to-indigo-900/30 flex items-center justify-center relative">
       <img
         src={url}
         alt={name}
         className="object-contain scale-[3.5] rotate-45 transition-transform duration-300 hover:scale-[4] hover:rotate-[50deg]"
+        onError={(e) => {
+          // Fallback to circuit board icon if image fails to load
+          const target = e.target as HTMLImageElement
+          target.style.display = "none"
+          const parent = target.parentElement
+          if (parent) {
+            const fallback = document.createElement("div")
+            fallback.className =
+              "w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center"
+            fallback.innerHTML =
+              '<svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>'
+            parent.appendChild(fallback)
+          }
+        }}
       />
+
+      <div className="absolute top-1 right-1 bg-primary/90 text-primary-foreground text-xs px-1.5 py-0.5 rounded-md font-medium shadow-sm">
+        TSC
+      </div>
     </div>
   )
 }
@@ -91,7 +109,13 @@ export const PreviewAttachment = ({
 
       <div className="px-1">
         <div className="text-xs font-medium text-foreground/80 max-w-32 sm:max-w-36 truncate group-hover:text-foreground transition-colors duration-200">
-          {name}
+          {contentType === "text/plain" ? (
+            <div className="flex items-center gap-1 text-left">
+              <span>{name}</span>
+            </div>
+          ) : (
+            name
+          )}
         </div>
       </div>
     </div>

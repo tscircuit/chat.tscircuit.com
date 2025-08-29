@@ -107,18 +107,36 @@ function PureMultimodalInput({
     setLocalStorageInput(input)
   }, [input, setLocalStorageInput])
 
-  const handleInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newValue = event.target.value
-    const oldValue = input
+  const handleInput = useCallback(
+    (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+      const newValue = event.target.value
+      const oldValue = input
 
-    // Check if '@' was just typed (for mobile compatibility)
-    if (newValue.length > oldValue.length && newValue.endsWith("@")) {
-      setShowFileSelector(true)
-    }
+      // Check if '@' was just typed (for mobile compatibility)
+      if (newValue.length > oldValue.length && newValue.endsWith("@")) {
+        setShowFileSelector(true)
+      }
 
-    setInput(newValue)
-    adjustHeight()
-  }
+      const oldPackageRefs: string[] = oldValue.match(/@[\w-\/]+/g) || []
+      const newPackageRefs: string[] = newValue.match(/@[\w-\/]+/g) || []
+
+      const removedPackages = oldPackageRefs
+        .filter((oldRef) => !newPackageRefs.includes(oldRef))
+        .map((ref) => ref.substring(1))
+
+      if (removedPackages.length > 0) {
+        setAttachments((currentAttachments) =>
+          currentAttachments.filter(
+            (attachment) => !removedPackages.includes(attachment.name || ""),
+          ),
+        )
+      }
+
+      setInput(newValue)
+      adjustHeight()
+    },
+    [input, setInput, setShowFileSelector, setAttachments],
+  )
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [uploadQueue, setUploadQueue] = useState<Array<string>>([])
@@ -240,8 +258,25 @@ function PureMultimodalInput({
       })
 
       try {
-        const attachment = await loadTscircuitPackageAsAttachment(packageName)
+        // Insert @packageName at cursor position
+        const cursorPos = textareaRef.current.selectionStart || 0
+        const textBefore = input.slice(0, cursorPos)
+        const textAfter = input.slice(cursorPos)
+        const newText = textBefore + `@${packageName}` + textAfter
 
+        setInput(newText)
+
+        // Update cursor position after insertion
+        setTimeout(() => {
+          const newCursorPos = cursorPos + `@${packageName}`.length
+          if (textareaRef.current) {
+            textareaRef.current.selectionStart = newCursorPos
+            textareaRef.current.selectionEnd = newCursorPos
+          }
+        }, 0)
+
+        // Load package as attachment
+        const attachment = await loadTscircuitPackageAsAttachment(packageName)
         setAttachments((currentAttachments) => [
           ...currentAttachments,
           attachment,
@@ -267,7 +302,7 @@ function PureMultimodalInput({
         textareaRef.current?.focus()
       }, 0)
     },
-    [attachments, setAttachments],
+    [attachments, setAttachments, input],
   )
 
   return (
@@ -289,9 +324,47 @@ function PureMultimodalInput({
 
       {(attachments.length > 0 || uploadQueue.length > 0) && (
         <div className="flex flex-row gap-2 overflow-x-scroll items-end no-scrollbar">
-          {attachments.map((attachment) => (
-            <PreviewAttachment key={attachment.url} attachment={attachment} />
-          ))}
+          {attachments.map((attachment) => {
+            // Check if this package is referenced in the text with @
+            const isReferenced =
+              attachment.name && input.includes(`@${attachment.name}`)
+            return (
+              <div key={attachment.url} className="relative group">
+                <PreviewAttachment attachment={attachment} />
+                {isReferenced && (
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full flex items-center justify-center">
+                    <span className="text-[8px] text-primary-foreground font-bold">
+                      @
+                    </span>
+                  </div>
+                )}
+                {/* Remove button for packages */}
+                {attachment.contentType === "text/plain" && (
+                  <button
+                    onClick={() => {
+                      // Remove from attachments
+                      setAttachments((currentAttachments) =>
+                        currentAttachments.filter(
+                          (a) => a.url !== attachment.url,
+                        ),
+                      )
+                      // Remove @packagename from input text
+                      if (attachment.name) {
+                        const newInput = input.replace(
+                          new RegExp(`@${attachment.name}`, "g"),
+                          "",
+                        )
+                        setInput(newInput)
+                      }
+                    }}
+                    className="absolute -top-2 -right-2 w-5 h-5 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/80"
+                  >
+                    <span className="text-xs">×</span>
+                  </button>
+                )}
+              </div>
+            )
+          })}
 
           {uploadQueue.map((filename) => (
             <PreviewAttachment
