@@ -21,9 +21,9 @@ function PureSuggestedActions({ chatId, append }: SuggestedActionsProps) {
       action: "Create a keyboard with a 3x3 grid of keys",
     },
     {
-      title: "Make a Raspberry Pi hat",
-      label: "that controls an epaper display",
-      action: "Make a Raspberry Pi hat that controls an epaper display",
+      title: "Create a 555 timer",
+      label: "that controls an LED",
+      action: "Create a 555 timer that controls an LED",
     },
     {
       title: "Design an LED Matrix",
