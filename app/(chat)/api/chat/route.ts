@@ -1,8 +1,10 @@
 import {
-  type Message,
+  type UIMessage as Message,
   createDataStreamResponse,
   smoothStream,
   streamText,
+  convertToModelMessages,
+  stepCountIs,
 } from "ai"
 
 import { getSession } from "@/app/(auth)/server-auth"
@@ -15,7 +17,6 @@ import {
   saveMessages,
 } from "@/lib/db/queries"
 import {
-  generateUUID,
   getMostRecentUserMessage,
   sanitizeResponseMessages,
 } from "@/lib/utils"
@@ -100,14 +101,15 @@ export async function POST(request: Request) {
               selectedChatModel,
               textAttachmentStrings: getTextAttachmentStrings(messages),
             }),
-            messages: removeTextAttachments(messages),
-            maxSteps: 5,
+            messages: convertToModelMessages(
+              removeTextAttachments(messages),
+            ),
+            stopWhen: stepCountIs(5),
             temperature: 1, // GPT-5 only supports temperature value of 1
-            experimental_activeTools: selectedChatModel.includes("reasoning")
+            activeTools: selectedChatModel.includes("reasoning")
               ? []
               : ["createDocument", "updateDocument", "requestSuggestions"],
-            experimental_transform: smoothStream({ chunking: "word" }),
-            experimental_generateMessageId: generateUUID,
+            transform: smoothStream({ chunking: "word" }),
             tools: {
               createDocument: createDocument({ session, dataStream }),
               updateDocument: updateDocument({ session, dataStream }),

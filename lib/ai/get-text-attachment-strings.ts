@@ -1,4 +1,4 @@
-import { Message } from "ai"
+import { UIMessage as Message } from "ai"
 
 export const getTextAttachmentStrings = (messages: Message[]): string[] => {
   return messages

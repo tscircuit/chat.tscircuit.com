@@ -12,7 +12,7 @@ export const textDocumentHandler = createDocumentHandler<"text">({
       model: myProvider.languageModel("block-model"),
       system:
         "Write about the given topic. Markdown is supported. Use headings wherever appropriate.",
-      experimental_transform: smoothStream({ chunking: "word" }),
+      transform: smoothStream({ chunking: "word" }),
       prompt: title,
       temperature: 1, // GPT-5 only supports temperature value of 1
     })
@@ -40,10 +40,10 @@ export const textDocumentHandler = createDocumentHandler<"text">({
     const { fullStream } = streamText({
       model: myProvider.languageModel("block-model"),
       system: updateDocumentPrompt(document.content, "text"),
-      experimental_transform: smoothStream({ chunking: "word" }),
+      transform: smoothStream({ chunking: "word" }),
       prompt: description,
       temperature: 1, // GPT-5 only supports temperature value of 1
-      experimental_providerMetadata: {
+      providerOptions: {
         openai: {
           prediction: {
             type: "content",

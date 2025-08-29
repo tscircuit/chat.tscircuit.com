@@ -1,6 +1,11 @@
 "use client"
 
-import type { Attachment, ChatRequestOptions, CreateMessage, Message } from "ai"
+import type {
+  Attachment,
+  ChatRequestOptions,
+  CreateUIMessage as CreateMessage,
+  UIMessage as Message,
+} from "ai"
 import cx from "classnames"
 import type React from "react"
 import {

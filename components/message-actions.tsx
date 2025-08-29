@@ -1,4 +1,4 @@
-import type { Message } from "ai"
+import type { UIMessage as Message } from "ai"
 import { toast } from "sonner"
 import { useSWRConfig } from "swr"
 import { useCopyToClipboard } from "usehooks-ts"

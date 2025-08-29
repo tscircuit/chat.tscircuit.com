@@ -1,8 +1,9 @@
 "use client"
 
-import type { Attachment, Message } from "ai"
-import { useChat } from "ai/react"
-import { useState } from "react"
+import type { Attachment, UIMessage as Message } from "ai"
+import { useChat } from "@ai-sdk/react"
+import { DefaultChatTransport } from "ai"
+import { useCallback, useState } from "react"
 import useSWR, { useSWRConfig } from "swr"
 
 import { ChatHeader } from "@/components/chat-header"
@@ -30,31 +31,54 @@ export function Chat({
   isReadonly: boolean
 }) {
   const { mutate } = useSWRConfig()
+  const [input, setInput] = useState("")
 
   const {
     messages,
     setMessages,
-    handleSubmit,
-    input,
-    setInput,
-    append,
+    sendMessage,
     isLoading,
     stop,
-    reload,
+    regenerate,
   } = useChat({
     id,
-    body: { id, selectedChatModel: selectedChatModel },
-    initialMessages,
+    messages: initialMessages,
+    transport: new DefaultChatTransport({
+      api: "/api/chat",
+      body: { id, selectedChatModel },
+    }),
     experimental_throttle: 100,
     sendExtraMessageFields: true,
     generateId: generateUUID,
     onFinish: () => {
       mutate("/api/history")
     },
-    onError: (error) => {
+    onError: () => {
       toast.error("An error occured, please try again!")
     },
   })
+
+  const handleSubmit = useCallback(
+    (
+      event?: { preventDefault?: () => void },
+      chatRequestOptions?: any,
+    ) => {
+      event?.preventDefault?.()
+      void sendMessage(
+        { role: "user", content: input },
+        chatRequestOptions,
+      )
+      setInput("")
+    },
+    [input, sendMessage],
+  )
+
+  const append = (
+    message: Message | any,
+    chatRequestOptions?: any,
+  ) => sendMessage(message as any, chatRequestOptions)
+
+  const reload = regenerate
 
   // Only fetch votes for authenticated users (readonly users can't vote anyway)
   const { data: votes } = useSWR<Array<Vote>>(

@@ -1,6 +1,10 @@
 "use client"
 
-import type { ChatRequestOptions, CreateMessage, Message } from "ai"
+import type {
+  ChatRequestOptions,
+  CreateUIMessage as CreateMessage,
+  UIMessage as Message,
+} from "ai"
 import cx from "classnames"
 import {
   AnimatePresence,
@@ -39,7 +43,7 @@ import {
 } from "./icons"
 import { blockDefinitions, BlockKind } from "./block"
 import { BlockToolbarItem } from "./create-block"
-import { UseChatHelpers } from "ai/react"
+import { UseChatHelpers } from "@ai-sdk/react"
 
 type ToolProps = {
   description: string
