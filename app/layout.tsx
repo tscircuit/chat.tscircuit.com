@@ -66,9 +66,9 @@ export default async function RootLayout({
             <Toaster
               icons={{
                 loading: (
-                  <Loader2 className="w-5 h-5 text-background animate-spin" />
+                  <Loader2 className="w-5 h-5 text-black animate-spin" />
                 ),
-                success: <CheckCheckIcon className="w-5 h-5 text-background" />,
+                success: <CheckCheckIcon className="w-5 h-5 text-black" />,
               }}
               position="top-center"
             />
