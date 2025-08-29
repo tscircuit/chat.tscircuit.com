@@ -52,7 +52,7 @@ function PureBlockMessages({
               Start a conversation
             </div>
             <div className="text-xs">
-              Ask questions or describe what you'd like to build
+              Ask questions or describe what you&apos;d like to build
             </div>
           </div>
         </div>
