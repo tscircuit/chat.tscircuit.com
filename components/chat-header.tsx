@@ -19,11 +19,13 @@ function PureChatHeader({
   selectedModelId,
   selectedVisibilityType,
   isReadonly,
+  onModelSelect,
 }: {
   chatId: string
   selectedModelId: string
   selectedVisibilityType: VisibilityType
   isReadonly: boolean
+  onModelSelect?: (modelId: string) => void
 }) {
   const router = useRouter()
   const { open } = useSidebar()
@@ -57,6 +59,7 @@ function PureChatHeader({
         <ModelSelector
           selectedModelId={selectedModelId}
           className="order-1 md:order-2"
+          onModelSelect={onModelSelect}
         />
       )}
 

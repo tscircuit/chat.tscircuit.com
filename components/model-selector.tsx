@@ -18,8 +18,10 @@ import { CheckCircleFillIcon, ChevronDownIcon } from "./icons"
 export function ModelSelector({
   selectedModelId,
   className,
+  onModelSelect,
 }: {
   selectedModelId: string
+  onModelSelect?: (modelId: string) => void
 } & React.ComponentProps<typeof Button>) {
   const [open, setOpen] = useState(false)
   const [optimisticModelId, setOptimisticModelId] =
@@ -57,6 +59,7 @@ export function ModelSelector({
                 startTransition(() => {
                   setOptimisticModelId(id)
                   saveChatModelAsCookie(id)
+                  onModelSelect?.(id)
                 })
               }}
               className="gap-4 group/item flex flex-row justify-between items-center"
