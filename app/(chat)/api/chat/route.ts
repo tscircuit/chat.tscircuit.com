@@ -109,8 +109,16 @@ export async function POST(request: Request) {
             experimental_transform: smoothStream({ chunking: "word" }),
             experimental_generateMessageId: generateUUID,
             tools: {
-              createDocument: createDocument({ session, dataStream }),
-              updateDocument: updateDocument({ session, dataStream }),
+              createDocument: createDocument({
+                session,
+                dataStream,
+                selectedModelId: selectedChatModel,
+              }),
+              updateDocument: updateDocument({
+                session,
+                dataStream,
+                selectedModelId: selectedChatModel,
+              }),
               requestSuggestions: requestSuggestions({
                 session,
                 dataStream,

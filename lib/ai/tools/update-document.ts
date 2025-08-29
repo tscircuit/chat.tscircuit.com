@@ -7,9 +7,14 @@ import { Session } from "@/app/(auth)/server-auth"
 interface UpdateDocumentProps {
   session: Session
   dataStream: DataStreamWriter
+  selectedModelId?: string
 }
 
-export const updateDocument = ({ session, dataStream }: UpdateDocumentProps) =>
+export const updateDocument = ({
+  session,
+  dataStream,
+  selectedModelId,
+}: UpdateDocumentProps) =>
   tool({
     description: "Update a document with the given description.",
     parameters: z.object({
@@ -46,6 +51,7 @@ export const updateDocument = ({ session, dataStream }: UpdateDocumentProps) =>
         description,
         dataStream,
         session,
+        selectedModelId,
       })
 
       dataStream.writeData({ type: "finish", content: "" })

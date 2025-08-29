@@ -7,9 +7,14 @@ import { Session } from "@/app/(auth)/server-auth"
 interface CreateDocumentProps {
   session: Session
   dataStream: DataStreamWriter
+  selectedModelId?: string
 }
 
-export const createDocument = ({ session, dataStream }: CreateDocumentProps) =>
+export const createDocument = ({
+  session,
+  dataStream,
+  selectedModelId,
+}: CreateDocumentProps) =>
   tool({
     description:
       "Create a document for a writing or content creation activities. This tool will call other functions that will generate the contents of the document based on the title and kind.",
@@ -54,6 +59,7 @@ export const createDocument = ({ session, dataStream }: CreateDocumentProps) =>
         title,
         dataStream,
         session,
+        selectedModelId,
       })
 
       dataStream.writeData({ type: "finish", content: "" })
