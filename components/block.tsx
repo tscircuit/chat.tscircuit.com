@@ -26,6 +26,7 @@ import { codeBlock } from "@/blocks/code/client"
 import { sheetBlock } from "@/blocks/sheet/client"
 import { textBlock } from "@/blocks/text/client"
 import equal from "fast-deep-equal"
+import { cn } from "@/lib/utils"
 
 export const blockDefinitions = [textBlock, codeBlock, imageBlock, sheetBlock]
 export type BlockKind = (typeof blockDefinitions)[number]["kind"]
@@ -279,16 +280,21 @@ function PureBlock({
             />
           )}
 
-          {!isMobile && (
+          {(isMobile || !isMobile) && (
             <motion.div
-              className="relative w-[400px] bg-muted dark:bg-background h-dvh shrink-0"
-              initial={{ opacity: 0, x: 10, scale: 1 }}
+              className={cn(
+                "relative bg-muted dark:bg-background h-dvh shrink-0",
+                isMobile ? "w-full" : "w-[650px]",
+              )}
+              initial={
+                isMobile ? { opacity: 1 } : { opacity: 0, x: 10, scale: 1 }
+              }
               animate={{
                 opacity: 1,
                 x: 0,
                 scale: 1,
                 transition: {
-                  delay: 0.2,
+                  delay: isMobile ? 0 : 0.2,
                   type: "spring",
                   stiffness: 200,
                   damping: 30,
@@ -304,7 +310,10 @@ function PureBlock({
               <AnimatePresence>
                 {!isCurrentVersion && (
                   <motion.div
-                    className="left-0 absolute h-dvh w-[400px] top-0 bg-zinc-900/50 z-50"
+                    className={cn(
+                      "left-0 absolute h-dvh top-0 bg-zinc-900/50 z-50",
+                      isMobile ? "w-full" : "w-[650px]",
+                    )}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -312,34 +321,38 @@ function PureBlock({
                 )}
               </AnimatePresence>
 
-              <div className="flex flex-col h-full justify-between items-center gap-4">
-                <BlockMessages
-                  chatId={chatId}
-                  isLoading={isLoading}
-                  votes={votes}
-                  messages={messages}
-                  setMessages={setMessages}
-                  reload={reload}
-                  isReadonly={isReadonly}
-                  blockStatus={block.status}
-                />
-
-                <form className="flex flex-row gap-2 relative items-end w-full px-4 pb-4">
-                  <MultimodalInput
+              <div className="flex flex-col h-full overflow-hidden">
+                <div className="flex-1 min-h-0 overflow-hidden">
+                  <BlockMessages
                     chatId={chatId}
-                    input={input}
-                    setInput={setInput}
-                    handleSubmit={handleSubmit}
                     isLoading={isLoading}
-                    stop={stop}
-                    attachments={attachments}
-                    setAttachments={setAttachments}
+                    votes={votes}
                     messages={messages}
-                    append={append}
-                    className="bg-background dark:bg-muted"
                     setMessages={setMessages}
+                    reload={reload}
+                    isReadonly={isReadonly}
+                    blockStatus={block.status}
                   />
-                </form>
+                </div>
+
+                <div className="flex-shrink-0 border-t dark:border-zinc-700 border-zinc-200">
+                  <form className="flex flex-row gap-2 relative items-end w-full p-2 sm:p-3">
+                    <MultimodalInput
+                      chatId={chatId}
+                      input={input}
+                      setInput={setInput}
+                      handleSubmit={handleSubmit}
+                      isLoading={isLoading}
+                      stop={stop}
+                      attachments={attachments}
+                      setAttachments={setAttachments}
+                      messages={messages}
+                      append={append}
+                      className="bg-background dark:bg-muted"
+                      setMessages={setMessages}
+                    />
+                  </form>
+                </div>
               </div>
             </motion.div>
           )}
@@ -384,12 +397,12 @@ function PureBlock({
                   }
                 : {
                     opacity: 1,
-                    x: 400,
+                    x: 650,
                     y: 0,
                     height: windowHeight,
                     width: windowWidth
-                      ? windowWidth - 400
-                      : "calc(100dvw-400px)",
+                      ? windowWidth - 650
+                      : "calc(100dvw-650px)",
                     borderRadius: 0,
                     transition: {
                       delay: 0,
