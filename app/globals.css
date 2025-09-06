@@ -246,3 +246,30 @@ div.hidden.overflow-x-auto.dark\:block.\[\&\>pre\]\:bg-transparent\!.my-4.h-auto
   > pre {
   padding: 1rem;
 }
+div.hidden.overflow-x-auto.dark\:block.\[\&\>pre\]\:bg-transparent\!.my-4.h-auto.rounded-lg.border.p-4.language-tsx {
+  max-width: 90vw;
+  background-color: #24292e;
+}
+div.overflow-x-auto.dark\:hidden.\[\&\>pre\]\:bg-transparent\!.my-4.h-auto.rounded-lg.border.p-4.language-tsx {
+  max-width: 85vw;
+  background-color: #fff;
+}
+div.overflow-x-auto.dark\:hidden.\[\&\>pre\]\:bg-transparent\!.my-4.h-auto.rounded-lg.border.p-4.language-tsx
+  > pre {
+  padding: 0 !important;
+}
+.language-tsx::-webkit-scrollbar {
+  width: 6px;
+  height: 2px;
+  background-color: transparent;
+}
+
+.language-tsx::-webkit-scrollbar-thumb {
+  background-color: rgba(215, 215, 215, 0.564);
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.language-tsx::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(193, 193, 193, 0.455);
+}
