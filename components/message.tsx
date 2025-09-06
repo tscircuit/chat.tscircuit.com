@@ -260,7 +260,7 @@ export const ThinkingMessage = () => {
           <SparklesIcon size={14} />
         </div>
 
-        <div className="flex flex-col gap-2 w-full">
+        <div className="flex flex-col gap-2 w-full select-none">
           <div className="flex flex-col gap-4 text-muted-foreground">
             Thinking...
           </div>

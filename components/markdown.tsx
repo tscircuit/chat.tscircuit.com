@@ -21,7 +21,9 @@ const components: Partial<Components> = {
 }
 
 const NonMemoizedMarkdown = ({ children }: { children: string }) => (
-  <Streamdown components={components}>{children}</Streamdown>
+  <Streamdown className="[&>pre]:!invert" components={components}>
+    {children}
+  </Streamdown>
 )
 
 export const Markdown = memo(

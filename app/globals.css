@@ -234,3 +234,15 @@
 .subtle-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: rgba(193, 193, 193, 0.455);
 }
+
+.cm-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+div.hidden.overflow-x-auto.dark\:block.\[\&\>pre\]\:bg-transparent\!.my-4.h-auto.rounded-lg.border.p-4.language-tsx {
+  padding: 0 !important;
+}
+div.hidden.overflow-x-auto.dark\:block.\[\&\>pre\]\:bg-transparent\!.my-4.h-auto.rounded-lg.border.p-4.language-tsx
+  > pre {
+  padding: 1rem;
+}
