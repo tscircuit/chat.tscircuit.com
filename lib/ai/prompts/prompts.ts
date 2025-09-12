@@ -209,9 +209,6 @@ export default () => (
   </board>
 )
 \`\`\`
-
-Here is the documentation for tscircuit:
-${docsContent}
 `
 
 export const updateDocumentPrompt = (
