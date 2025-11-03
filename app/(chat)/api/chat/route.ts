@@ -1,9 +1,4 @@
-import {
-  type UIMessage,
-  smoothStream,
-  streamText,
-  stepCountIs,
-} from "ai";
+import { type UIMessage, smoothStream, streamText, stepCountIs } from "ai"
 
 import { getSession } from "@/app/(auth)/server-auth"
 import { myProvider } from "@/lib/ai/models"
@@ -82,13 +77,15 @@ export async function POST(request: Request) {
     // Save user message to database (convert UIMessage to DB format)
     try {
       await saveMessages({
-        messages: [{ 
-          id: userMessage.id,
-          role: userMessage.role as any,
-          content: userMessage.parts,
-          createdAt: new Date(), 
-          chatId: id 
-        }],
+        messages: [
+          {
+            id: userMessage.id,
+            role: userMessage.role as any,
+            content: userMessage.parts,
+            createdAt: new Date(),
+            chatId: id,
+          },
+        ],
       })
     } catch (error) {
       console.error("Failed to save user message:", error)
@@ -140,13 +137,15 @@ export async function POST(request: Request) {
               for (const message of response.messages) {
                 if (message.role === "assistant") {
                   await saveMessages({
-                    messages: [{
-                      id: generateUUID(),
-                      chatId: id,
-                      role: "assistant",
-                      content: message.content as any,
-                      createdAt: new Date(),
-                    }],
+                    messages: [
+                      {
+                        id: generateUUID(),
+                        chatId: id,
+                        role: "assistant",
+                        content: message.content as any,
+                        createdAt: new Date(),
+                      },
+                    ],
                   })
                 }
               }
@@ -159,7 +158,7 @@ export async function POST(request: Request) {
         experimental_telemetry: {
           isEnabled: true,
           functionId: "stream-text",
-        }
+        },
       })
 
       // In v5, convert the stream result to a proper response
@@ -168,7 +167,7 @@ export async function POST(request: Request) {
       console.error("Error in streamText execution:", error)
       return new Response(
         `Error: ${error instanceof Error ? error.message : String(error)}`,
-        { status: 500 }
+        { status: 500 },
       )
     }
   } catch (error) {

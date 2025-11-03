@@ -6,8 +6,9 @@ export const removeTextAttachments = (messages: UIMessage[]) => {
     return {
       ...message,
       parts: message.parts?.filter(
-        (part: any) => !(part.type === "file" && part.mimeType === "text/plain"),
+        (part: any) =>
+          !(part.type === "file" && part.mimeType === "text/plain"),
       ),
-    };
-  });
+    }
+  })
 }

@@ -16,12 +16,14 @@ export const imageDocumentHandler = createDocumentHandler<"image">({
     draftContent = image.base64
 
     dataStream.write({
-      'type': 'data',
+      type: "data",
 
-      'value': [{
-        type: "image-delta",
-        content: image.base64,
-      }]
+      value: [
+        {
+          type: "image-delta",
+          content: image.base64,
+        },
+      ],
     })
 
     return draftContent
@@ -38,12 +40,14 @@ export const imageDocumentHandler = createDocumentHandler<"image">({
     draftContent = image.base64
 
     dataStream.write({
-      'type': 'data',
+      type: "data",
 
-      'value': [{
-        type: "image-delta",
-        content: image.base64,
-      }]
+      value: [
+        {
+          type: "image-delta",
+          content: image.base64,
+        },
+      ],
     })
 
     return draftContent

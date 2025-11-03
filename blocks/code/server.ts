@@ -1,4 +1,4 @@
-import { z } from 'zod/v3';
+import { z } from "zod/v3"
 import { streamObject } from "ai"
 import { myProvider } from "@/lib/ai/models"
 import { codePrompt, updateDocumentPrompt } from "@/lib/ai/prompts/prompts"
@@ -28,12 +28,14 @@ export const codeDocumentHandler = createDocumentHandler<"code">({
 
         if (code) {
           dataStream.write({
-            'type': 'data',
+            type: "data",
 
-            'value': [{
-              type: "code-delta",
-              content: code ?? "",
-            }]
+            value: [
+              {
+                type: "code-delta",
+                content: code ?? "",
+              },
+            ],
           })
 
           draftContent = code
@@ -70,12 +72,14 @@ export const codeDocumentHandler = createDocumentHandler<"code">({
 
         if (code) {
           dataStream.write({
-            'type': 'data',
+            type: "data",
 
-            'value': [{
-              type: "code-delta",
-              content: code ?? "",
-            }]
+            value: [
+              {
+                type: "code-delta",
+                content: code ?? "",
+              },
+            ],
           })
 
           draftContent = code

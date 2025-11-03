@@ -1,7 +1,7 @@
 "use client"
 
 import type { UIMessage } from "ai"
-import { useChat } from '@ai-sdk/react'
+import { useChat } from "@ai-sdk/react"
 import { useState } from "react"
 import useSWR, { useSWRConfig } from "swr"
 
@@ -42,7 +42,7 @@ export function Chat({
     append,
     isLoading,
     stop,
-    reload
+    reload,
   } = useChat({
     id,
     body: { id, selectedChatModel: modelId },
@@ -56,7 +56,7 @@ export function Chat({
 
     onError: (error) => {
       toast.error("An error occured, please try again!")
-    }
+    },
   })
 
   // Only fetch votes for authenticated users (readonly users can't vote anyway)

@@ -1,4 +1,9 @@
-import type { Attachment, ChatRequestOptions, CreateUIMessage, UIMessage } from "ai"
+import type {
+  Attachment,
+  ChatRequestOptions,
+  CreateUIMessage,
+  UIMessage,
+} from "ai"
 import { formatDistance } from "date-fns"
 import { AnimatePresence, motion } from "framer-motion"
 import {

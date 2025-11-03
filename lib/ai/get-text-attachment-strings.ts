@@ -4,7 +4,9 @@ export const getTextAttachmentStrings = (messages: UIMessage[]): string[] => {
   // In v5, attachments are stored in the parts array with type "file"
   return messages
     .flatMap((message) => message.parts || [])
-    .filter((part: any) => part.type === "file" && part.mimeType === "text/plain")
+    .filter(
+      (part: any) => part.type === "file" && part.mimeType === "text/plain",
+    )
     .map((part: any) => {
       if (!part?.url?.startsWith("data:")) return null
       try {
@@ -14,5 +16,5 @@ export const getTextAttachmentStrings = (messages: UIMessage[]): string[] => {
         return null
       }
     })
-    .filter((str) => str !== null);
+    .filter((str) => str !== null)
 }

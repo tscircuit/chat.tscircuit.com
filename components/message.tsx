@@ -50,13 +50,15 @@ const PurePreviewMessage = ({
   const [mode, setMode] = useState<"view" | "edit">("view")
 
   // Extract content from parts array (v5)
-  const textContent = message.parts
-    ?.filter((part: any) => part.type === "text")
-    .map((part: any) => part.text)
-    .join("\n") || ""
+  const textContent =
+    message.parts
+      ?.filter((part: any) => part.type === "text")
+      .map((part: any) => part.text)
+      .join("\n") || ""
 
   // Extract tool invocations from parts array (v5)
-  const toolParts = message.parts?.filter((part: any) => part.type?.startsWith("tool-")) || []
+  const toolParts =
+    message.parts?.filter((part: any) => part.type?.startsWith("tool-")) || []
 
   return (
     <AnimatePresence>
@@ -207,7 +209,7 @@ const PurePreviewMessage = ({
         </div>
       </motion.div>
     </AnimatePresence>
-  );
+  )
 }
 
 export const PreviewMessage = memo(

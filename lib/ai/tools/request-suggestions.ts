@@ -1,4 +1,4 @@
-import { z } from 'zod/v3';
+import { z } from "zod/v3"
 import { Session } from "@/app/(auth)/server-auth"
 import { UIMessageStreamWriter, streamObject, tool } from "ai"
 import { getDocumentById, saveSuggestions } from "@/lib/db/queries"
@@ -59,8 +59,8 @@ export const requestSuggestions = ({
         }
 
         dataStream.write({
-          'type': 'data-suggestion',
-          'data': suggestion
+          type: "data-suggestion",
+          data: suggestion,
         })
 
         suggestions.push(suggestion)

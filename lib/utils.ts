@@ -49,7 +49,7 @@ export function generateUUID(): string {
     const r = (Math.random() * 16) | 0
     const v = c === "x" ? r : (r & 0x3) | 0x8
     return v.toString(16)
-  });
+  })
 }
 
 export function convertToUIMessages(
@@ -57,7 +57,7 @@ export function convertToUIMessages(
 ): Array<UIMessage> {
   return messages.map((message) => {
     const parts: any[] = []
-    
+
     // Convert old content format to new parts array
     if (typeof message.content === "string" && message.content) {
       parts.push({ type: "text", text: message.content })
@@ -104,7 +104,9 @@ export function sanitizeResponseMessages({
   })
 }
 
-export function sanitizeUIMessages(messages: Array<UIMessage>): Array<UIMessage> {
+export function sanitizeUIMessages(
+  messages: Array<UIMessage>,
+): Array<UIMessage> {
   // In v5, filter out messages with empty parts
   return messages.filter((message) => {
     return message.parts && message.parts.length > 0

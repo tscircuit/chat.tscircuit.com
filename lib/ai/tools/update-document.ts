@@ -1,5 +1,5 @@
 import { UIMessageStreamWriter, tool } from "ai"
-import { z } from 'zod/v3';
+import { z } from "zod/v3"
 import { getDocumentById, saveDocument } from "@/lib/db/queries"
 import { documentHandlersByBlockKind } from "@/lib/blocks/server"
 import { Session } from "@/app/(auth)/server-auth"
@@ -33,8 +33,8 @@ export const updateDocument = ({
       }
 
       dataStream.write({
-        'type': 'data-clear',
-        'data': document.title
+        type: "data-clear",
+        data: document.title,
       })
 
       const documentHandler = documentHandlersByBlockKind.find(
@@ -55,8 +55,8 @@ export const updateDocument = ({
       })
 
       dataStream.write({
-        'type': 'data-finish',
-        'data': ""
+        type: "data-finish",
+        data: "",
       })
 
       return {

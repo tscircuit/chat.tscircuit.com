@@ -1,6 +1,6 @@
 "use client"
 
-import { useChat } from '@ai-sdk/react'
+import { useChat } from "@ai-sdk/react"
 import { useEffect, useRef } from "react"
 import { blockDefinitions, BlockKind } from "./block"
 import { Suggestion } from "@/lib/db/schema"

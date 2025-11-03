@@ -26,12 +26,14 @@ export const textDocumentHandler = createDocumentHandler<"text">({
         draftContent += textDelta
 
         dataStream.write({
-          'type': 'data',
+          type: "data",
 
-          'value': [{
-            type: "text-delta",
-            content: textDelta,
-          }]
+          value: [
+            {
+              type: "text-delta",
+              content: textDelta,
+            },
+          ],
         })
       }
     }
@@ -70,12 +72,14 @@ export const textDocumentHandler = createDocumentHandler<"text">({
 
         draftContent += textDelta
         dataStream.write({
-          'type': 'data',
+          type: "data",
 
-          'value': [{
-            type: "text-delta",
-            content: textDelta,
-          }]
+          value: [
+            {
+              type: "text-delta",
+              content: textDelta,
+            },
+          ],
         })
       }
     }

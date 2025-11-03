@@ -1,6 +1,6 @@
 import { generateUUID } from "@/lib/utils"
 import { UIMessageStreamWriter, tool } from "ai"
-import { z } from 'zod/v3';
+import { z } from "zod/v3"
 import { blockKinds, documentHandlersByBlockKind } from "@/lib/blocks/server"
 import { Session } from "@/app/(auth)/server-auth"
 
@@ -26,23 +26,23 @@ export const createDocument = ({
       const id = generateUUID()
 
       dataStream.write({
-        'type': 'data-kind',
-        'data': kind
+        type: "data-kind",
+        data: kind,
       })
 
       dataStream.write({
-        'type': 'data-id',
-        'data': id
+        type: "data-id",
+        data: id,
       })
 
       dataStream.write({
-        'type': 'data-title',
-        'data': title
+        type: "data-title",
+        data: title,
       })
 
       dataStream.write({
-        'type': 'data-clear',
-        'data': ""
+        type: "data-clear",
+        data: "",
       })
 
       const documentHandler = documentHandlersByBlockKind.find(
@@ -63,8 +63,8 @@ export const createDocument = ({
       })
 
       dataStream.write({
-        'type': 'data-finish',
-        'data': ""
+        type: "data-finish",
+        data: "",
       })
 
       return {

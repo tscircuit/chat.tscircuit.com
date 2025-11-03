@@ -39,7 +39,7 @@ import {
 } from "./icons"
 import { blockDefinitions, BlockKind } from "./block"
 import { BlockToolbarItem } from "./create-block"
-import { UseChatHelpers } from '@ai-sdk/react'
+import { UseChatHelpers } from "@ai-sdk/react"
 
 type ToolProps = {
   description: string
