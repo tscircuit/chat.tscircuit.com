@@ -335,7 +335,7 @@ function PureBlock({
                   />
                 </div>
 
-                <div className="flex-shrink-0 border-t dark:border-zinc-700 border-zinc-200">
+                <div className="shrink-0 border-t dark:border-zinc-700 border-zinc-200">
                   <form className="flex flex-row gap-2 relative items-end w-full p-2 sm:p-3">
                     <MultimodalInput
                       chatId={chatId}
@@ -462,7 +462,7 @@ function PureBlock({
               />
             </div>
 
-            <div className="dark:bg-muted subtle-scrollbar w-full bg-background h-full overflow-y-scroll !max-w-full items-center">
+            <div className="dark:bg-muted subtle-scrollbar w-full bg-background h-full overflow-y-scroll max-w-full! items-center">
               <blockDefinition.content
                 title={block.title}
                 content={

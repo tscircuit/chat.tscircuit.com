@@ -41,7 +41,7 @@ export function SidebarUserNav({ user }: { user: AuthUser }) {
           </DropdownMenuTrigger>
           <DropdownMenuContent
             side="top"
-            className="w-[--radix-popper-anchor-width]"
+            className="w-(--radix-popper-anchor-width)"
           >
             <DropdownMenuItem
               className="cursor-pointer"

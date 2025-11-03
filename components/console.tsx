@@ -83,7 +83,18 @@ export function Console({ consoleOutputs, setConsoleOutputs }: ConsoleProps) {
         onMouseDown={startResizing}
         style={{ bottom: height - 4 }}
         role="slider"
-        aria-valuenow={minHeight}
+        tabIndex={0}
+        aria-valuemin={minHeight}
+        aria-valuemax={maxHeight}
+        aria-valuenow={height}
+        aria-orientation="vertical"
+        onKeyDown={(e) => {
+          if (e.key === "ArrowUp") {
+            setHeight((h) => Math.min(maxHeight, h + 10))
+          } else if (e.key === "ArrowDown") {
+            setHeight((h) => Math.max(minHeight, h - 10))
+          }
+        }}
       />
 
       <div
@@ -104,7 +115,7 @@ export function Console({ consoleOutputs, setConsoleOutputs }: ConsoleProps) {
           </div>
           <Button
             variant="ghost"
-            className="size-fit p-1 hover:dark:bg-zinc-700 hover:bg-zinc-200"
+            className="size-fit p-1 dark:hover:bg-zinc-700 hover:bg-zinc-200"
             size="icon"
             onClick={() => setConsoleOutputs([])}
           >
@@ -161,7 +172,7 @@ export function Console({ consoleOutputs, setConsoleOutputs }: ConsoleProps) {
                     ) : (
                       <div
                         key={`${consoleOutput.id}-${index}`}
-                        className="whitespace-pre-line break-words w-full"
+                        className="whitespace-pre-line wrap-break-word w-full"
                       >
                         {content.value}
                       </div>

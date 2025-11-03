@@ -209,7 +209,7 @@ export default function TscircuitPackageSelector({
                 >
                   <div className="flex items-center gap-3 w-full">
                     {/* Package Icon */}
-                    <div className="flex-shrink-0">
+                    <div className="shrink-0">
                       <div className="rounded-md bg-primary/10 p-1.5">
                         <CircuitBoardIcon />
                       </div>
@@ -218,7 +218,7 @@ export default function TscircuitPackageSelector({
                     {/* Package Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-0.5">
-                        <span className="font-medium !opacity-100 text-foreground text-sm truncate">
+                        <span className="font-medium opacity-100! text-foreground text-sm truncate">
                           {pkg.name}
                         </span>
                       </div>
@@ -228,7 +228,7 @@ export default function TscircuitPackageSelector({
                     </div>
 
                     {/* Star Count */}
-                    <div className="flex-shrink-0 flex items-center gap-1 text-xs text-muted-foreground">
+                    <div className="shrink-0 flex items-center gap-1 text-xs text-muted-foreground">
                       <StarIcon size={12} />
                       <span className="font-medium">
                         {pkg.star_count > 1000
@@ -244,7 +244,7 @@ export default function TscircuitPackageSelector({
 
           {/* Footer */}
           {packages.length > 0 && (
-            <div className="border-t z-[99] border-border p-2 bg-muted rounded-b-md mt-1 absolute bottom-0 left-0 right-0">
+            <div className="border-t z-99 border-border p-2 bg-muted rounded-b-md mt-1 absolute bottom-0 left-0 right-0">
               <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <div className="flex items-center gap-3">
                   <kbd>↑↓</kbd> Navigate

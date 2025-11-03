@@ -5,11 +5,11 @@ import { LoaderIcon } from "./icons"
 const TscircuitPackageImage = ({ name }: { name: string }) => {
   const url = `https://registry-api.tscircuit.com/snippets/images/${name}/pcb.svg`
   return (
-    <div className="size-full rounded-lg overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-950/30 dark:to-indigo-900/30 flex items-center justify-center relative">
+    <div className="size-full rounded-lg overflow-hidden bg-linear-to-br from-blue-50 to-indigo-100 dark:from-blue-950/30 dark:to-indigo-900/30 flex items-center justify-center relative">
       <img
         src={url}
         alt={name}
-        className="object-contain scale-[3.5] rotate-45 transition-transform duration-300 hover:scale-[4] hover:rotate-[50deg]"
+        className="object-contain scale-[3.5] rotate-45 transition-transform duration-300 hover:scale-[4] hover:rotate-50"
         onError={(e) => {
           // Fallback to circuit board icon if image fails to load
           const target = e.target as HTMLImageElement
@@ -26,7 +26,7 @@ const TscircuitPackageImage = ({ name }: { name: string }) => {
         }}
       />
 
-      <div className="absolute top-1 right-1 bg-primary/90 text-primary-foreground text-xs px-1.5 py-0.5 rounded-md font-medium shadow-sm">
+      <div className="absolute top-1 right-1 bg-primary/90 text-primary-foreground text-xs px-1.5 py-0.5 rounded-md font-medium shadow-xs">
         TSC
       </div>
     </div>
@@ -56,8 +56,8 @@ export const PreviewAttachment = ({
       onClick={handleClick}
       title={name ? `Ctrl+click to open ${name} on tscircuit.com` : undefined}
     >
-      <div className="relative w-32 h-20 sm:w-36 sm:h-24 rounded-xl border border-border/50 bg-background/80 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-background/50 to-muted/20" />
+      <div className="relative w-32 h-20 sm:w-36 sm:h-24 rounded-xl border border-border/50 bg-background/80 backdrop-blur-xs shadow-xs hover:shadow-md transition-all duration-200 overflow-hidden">
+        <div className="absolute inset-0 bg-linear-to-br from-background/50 to-muted/20" />
 
         {contentType ? (
           contentType.startsWith("image") ? (
@@ -97,7 +97,7 @@ export const PreviewAttachment = ({
         )}
 
         {isUploading && (
-          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-20 rounded-xl">
+          <div className="absolute inset-0 bg-background/80 backdrop-blur-xs flex items-center justify-center z-20 rounded-xl">
             <div className="animate-spin text-primary">
               <LoaderIcon />
             </div>
