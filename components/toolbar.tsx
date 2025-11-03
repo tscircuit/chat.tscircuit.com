@@ -1,6 +1,6 @@
 "use client"
 
-import type { ChatRequestOptions, CreateMessage, Message } from "ai"
+import type { ChatRequestOptions, CreateUIMessage, UIMessage } from "ai"
 import cx from "classnames"
 import {
   AnimatePresence,
@@ -39,7 +39,7 @@ import {
 } from "./icons"
 import { blockDefinitions, BlockKind } from "./block"
 import { BlockToolbarItem } from "./create-block"
-import { UseChatHelpers } from "ai/react"
+import { UseChatHelpers } from '@ai-sdk/react'
 
 type ToolProps = {
   description: string
@@ -50,7 +50,7 @@ type ToolProps = {
   setIsToolbarVisible?: Dispatch<SetStateAction<boolean>>
   isAnimating: boolean
   append: (
-    message: Message | CreateMessage,
+    message: UIMessage | CreateUIMessage,
     chatRequestOptions?: ChatRequestOptions,
   ) => Promise<string | null | undefined>
   onClick: ({
@@ -154,7 +154,7 @@ const ReadingLevelSelector = ({
   setSelectedTool: Dispatch<SetStateAction<string | null>>
   isAnimating: boolean
   append: (
-    message: Message | CreateMessage,
+    message: UIMessage | CreateUIMessage,
     chatRequestOptions?: ChatRequestOptions,
   ) => Promise<string | null | undefined>
 }) => {
@@ -268,7 +268,7 @@ export const Tools = ({
   selectedTool: string | null
   setSelectedTool: Dispatch<SetStateAction<string | null>>
   append: (
-    message: Message | CreateMessage,
+    message: UIMessage | CreateUIMessage,
     chatRequestOptions?: ChatRequestOptions,
   ) => Promise<string | null | undefined>
   isAnimating: boolean
@@ -328,11 +328,11 @@ const PureToolbar = ({
   setIsToolbarVisible: Dispatch<SetStateAction<boolean>>
   isLoading: boolean
   append: (
-    message: Message | CreateMessage,
+    message: UIMessage | CreateUIMessage,
     chatRequestOptions?: ChatRequestOptions,
   ) => Promise<string | null | undefined>
   stop: () => void
-  setMessages: Dispatch<SetStateAction<Message[]>>
+  setMessages: Dispatch<SetStateAction<UIMessage[]>>
   blockKind: BlockKind
 }) => {
   const toolbarRef = useRef<HTMLDivElement>(null)

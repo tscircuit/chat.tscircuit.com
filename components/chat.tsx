@@ -1,7 +1,7 @@
 "use client"
 
-import type { Attachment, Message } from "ai"
-import { useChat } from "ai/react"
+import type { UIMessage } from "ai"
+import { useChat } from '@ai-sdk/react'
 import { useState } from "react"
 import useSWR, { useSWRConfig } from "swr"
 
@@ -24,7 +24,7 @@ export function Chat({
   isReadonly,
 }: {
   id: string
-  initialMessages: Array<Message>
+  initialMessages: Array<UIMessage>
   selectedChatModel: string
   selectedVisibilityType: VisibilityType
   isReadonly: boolean
@@ -42,20 +42,21 @@ export function Chat({
     append,
     isLoading,
     stop,
-    reload,
+    reload
   } = useChat({
     id,
     body: { id, selectedChatModel: modelId },
-    initialMessages,
+    initialMessages: initialMessages as any,
     experimental_throttle: 100,
-    sendExtraMessageFields: true,
     generateId: generateUUID,
+
     onFinish: () => {
       mutate("/api/history")
     },
+
     onError: (error) => {
       toast.error("An error occured, please try again!")
-    },
+    }
   })
 
   // Only fetch votes for authenticated users (readonly users can't vote anyway)
@@ -64,8 +65,10 @@ export function Chat({
     fetcher,
   )
 
-  const [attachments, setAttachments] = useState<Array<Attachment>>([])
   const isBlockVisible = useBlockSelector((state) => state.isVisible)
+
+  // Dummy attachment state for compatibility
+  const [attachments, setAttachments] = useState<any[]>([])
 
   return (
     <>
@@ -82,8 +85,8 @@ export function Chat({
           chatId={id}
           isLoading={isLoading}
           votes={votes}
-          messages={messages}
-          setMessages={setMessages}
+          messages={messages as any}
+          setMessages={setMessages as any}
           reload={reload}
           isReadonly={isReadonly}
           isBlockVisible={isBlockVisible}
@@ -100,8 +103,8 @@ export function Chat({
               stop={stop}
               attachments={attachments}
               setAttachments={setAttachments}
-              messages={messages}
-              setMessages={setMessages}
+              messages={messages as any}
+              setMessages={setMessages as any}
               append={append}
             />
           )}
@@ -118,8 +121,8 @@ export function Chat({
         attachments={attachments}
         setAttachments={setAttachments}
         append={append}
-        messages={messages}
-        setMessages={setMessages}
+        messages={messages as any}
+        setMessages={setMessages as any}
         reload={reload}
         votes={votes}
         isReadonly={isReadonly}

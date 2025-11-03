@@ -1,6 +1,6 @@
 "use client"
 
-import type { Attachment, ChatRequestOptions, CreateMessage, Message } from "ai"
+import type { Attachment, ChatRequestOptions, CreateUIMessage, UIMessage } from "ai"
 import cx from "classnames"
 import type React from "react"
 import {
@@ -49,10 +49,10 @@ function PureMultimodalInput({
   stop: () => void
   attachments: Array<Attachment>
   setAttachments: Dispatch<SetStateAction<Array<Attachment>>>
-  messages: Array<Message>
-  setMessages: Dispatch<SetStateAction<Array<Message>>>
+  messages: Array<UIMessage>
+  setMessages: Dispatch<SetStateAction<Array<UIMessage>>>
   append: (
-    message: Message | CreateMessage,
+    message: UIMessage | CreateUIMessage,
     chatRequestOptions?: ChatRequestOptions,
   ) => Promise<string | null | undefined>
   handleSubmit: (
@@ -144,9 +144,10 @@ function PureMultimodalInput({
   const submitForm = useCallback(() => {
     window.history.replaceState({}, "", `/chat/${chatId}`)
 
+    /* FIXME(@ai-sdk-upgrade-v5): The `experimental_attachments` property has been replaced with the parts array. Please manually migrate following https://ai-sdk.dev/docs/migration-guides/migration-guide-5-0#attachments--file-parts */
     handleSubmit(undefined, {
       experimental_attachments: attachments,
-    })
+    });
 
     setAttachments([])
     setLocalStorageInput("")
@@ -466,7 +467,7 @@ function PureStopButton({
   setMessages,
 }: {
   stop: () => void
-  setMessages: Dispatch<SetStateAction<Array<Message>>>
+  setMessages: Dispatch<SetStateAction<Array<UIMessage>>>
 }) {
   return (
     <Button

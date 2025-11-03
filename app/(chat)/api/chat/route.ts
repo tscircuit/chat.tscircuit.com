@@ -1,9 +1,9 @@
 import {
-  type Message,
-  createDataStreamResponse,
+  type UIMessage,
   smoothStream,
   streamText,
-} from "ai"
+  stepCountIs,
+} from "ai";
 
 import { getSession } from "@/app/(auth)/server-auth"
 import { myProvider } from "@/lib/ai/models"
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     // Parse request body
     let requestData: {
       id: string
-      messages: Array<Message>
+      messages: Array<UIMessage>
       selectedChatModel: string
     }
     try {
@@ -79,10 +79,16 @@ export async function POST(request: Request) {
       return new Response("Failed to create or retrieve chat", { status: 500 })
     }
 
-    // Save user message
+    // Save user message to database (convert UIMessage to DB format)
     try {
       await saveMessages({
-        messages: [{ ...userMessage, createdAt: new Date(), chatId: id }],
+        messages: [{ 
+          id: userMessage.id,
+          role: userMessage.role as any,
+          content: userMessage.parts,
+          createdAt: new Date(), 
+          chatId: id 
+        }],
       })
     } catch (error) {
       console.error("Failed to save user message:", error)
@@ -91,85 +97,80 @@ export async function POST(request: Request) {
 
     console.log("selectedChatModel", selectedChatModel)
 
-    return createDataStreamResponse({
-      execute: (dataStream) => {
-        try {
-          const result = streamText({
-            model: myProvider.languageModel(selectedChatModel),
-            system: systemPrompt({
-              selectedChatModel,
-              textAttachmentStrings: getTextAttachmentStrings(messages),
-            }),
-            messages: removeTextAttachments(messages),
-            maxSteps: 5,
-            temperature: 1, // GPT-5 only supports temperature value of 1
-            experimental_activeTools: selectedChatModel.includes("reasoning")
-              ? []
-              : ["createDocument", "updateDocument", "requestSuggestions"],
-            experimental_transform: smoothStream({ chunking: "word" }),
-            experimental_generateMessageId: generateUUID,
-            tools: {
-              createDocument: createDocument({
-                session,
-                dataStream,
-                selectedModelId: selectedChatModel,
-              }),
-              updateDocument: updateDocument({
-                session,
-                dataStream,
-                selectedModelId: selectedChatModel,
-              }),
-              requestSuggestions: requestSuggestions({
-                session,
-                dataStream,
-              }),
-            },
-            onFinish: async ({ response, reasoning }) => {
-              if (session.user?.id) {
-                try {
-                  const sanitizedResponseMessages = sanitizeResponseMessages({
-                    messages: response.messages,
-                    reasoning,
-                  })
+    // Convert UIMessages to ModelMessage format for the AI SDK
+    const messagesForAI = messages.map((msg) => ({
+      role: msg.role as "user" | "assistant" | "system",
+      content: msg.parts as any,
+    }))
 
+    try {
+      const result = streamText({
+        model: myProvider.languageModel(selectedChatModel),
+
+        system: systemPrompt({
+          selectedChatModel,
+          textAttachmentStrings: getTextAttachmentStrings(messages),
+        }),
+
+        messages: messagesForAI,
+
+        // GPT-5 only supports temperature value of 1
+        temperature: 1,
+
+        // Note: Tools integration needs update for v5 dataStream API
+        // For now, disabling tools to get basic streaming working
+        // tools: {
+        //   createDocument: createDocument({
+        //     session,
+        //     selectedModelId: selectedChatModel,
+        //   }),
+        //   updateDocument: updateDocument({
+        //     session,
+        //     selectedModelId: selectedChatModel,
+        //   }),
+        //   requestSuggestions: requestSuggestions({
+        //     session,
+        //   }),
+        // },
+
+        onFinish: async ({ response }) => {
+          if (session.user?.id) {
+            try {
+              // In v5, save the assistant response messages
+              for (const message of response.messages) {
+                if (message.role === "assistant") {
                   await saveMessages({
-                    messages: sanitizedResponseMessages.map((message) => {
-                      return {
-                        id: message.id,
-                        chatId: id,
-                        role: message.role,
-                        content: message.content,
-                        createdAt: new Date(),
-                      }
-                    }),
+                    messages: [{
+                      id: generateUUID(),
+                      chatId: id,
+                      role: "assistant",
+                      content: message.content as any,
+                      createdAt: new Date(),
+                    }],
                   })
-                } catch (error) {
-                  console.error("Failed to save assistant messages:", error)
                 }
               }
-            },
-            experimental_telemetry: {
-              isEnabled: true,
-              functionId: "stream-text",
-            },
-          })
+            } catch (error) {
+              console.error("Failed to save assistant messages:", error)
+            }
+          }
+        },
 
-          result.mergeIntoDataStream(dataStream, {
-            sendReasoning: true,
-          })
-        } catch (error) {
-          console.error("Error in streamText execution:", error)
-          dataStream.writeData({
-            type: "error",
-            content: `Error: ${error instanceof Error ? error.message : String(error)}`,
-          })
+        experimental_telemetry: {
+          isEnabled: true,
+          functionId: "stream-text",
         }
-      },
-      onError: (error) => {
-        console.error("DataStream error:", error)
-        return `Error: ${error instanceof Error ? error.message : "An unknown error occurred"}`
-      },
-    })
+      })
+
+      // In v5, convert the stream result to a proper response
+      return result.toTextStreamResponse()
+    } catch (error) {
+      console.error("Error in streamText execution:", error)
+      return new Response(
+        `Error: ${error instanceof Error ? error.message : String(error)}`,
+        { status: 500 }
+      )
+    }
   } catch (error) {
     console.error("Unexpected error in POST handler:", error)
     return new Response(

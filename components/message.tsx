@@ -1,6 +1,6 @@
 "use client"
 
-import type { ChatRequestOptions, Message } from "ai"
+import type { ChatRequestOptions, UIMessage } from "ai"
 import cx from "classnames"
 import { AnimatePresence, motion } from "framer-motion"
 import { memo, useMemo, useState } from "react"
@@ -36,11 +36,11 @@ const PurePreviewMessage = ({
   isReadonly,
 }: {
   chatId: string
-  message: Message
+  message: UIMessage
   vote: Vote | undefined
   isLoading: boolean
   setMessages: (
-    messages: Message[] | ((messages: Message[]) => Message[]),
+    messages: UIMessage[] | ((messages: UIMessage[]) => UIMessage[]),
   ) => void
   reload: (
     chatRequestOptions?: ChatRequestOptions,
@@ -48,6 +48,15 @@ const PurePreviewMessage = ({
   isReadonly: boolean
 }) => {
   const [mode, setMode] = useState<"view" | "edit">("view")
+
+  // Extract content from parts array (v5)
+  const textContent = message.parts
+    ?.filter((part: any) => part.type === "text")
+    .map((part: any) => part.text)
+    .join("\n") || ""
+
+  // Extract tool invocations from parts array (v5)
+  const toolParts = message.parts?.filter((part: any) => part.type?.startsWith("tool-")) || []
 
   return (
     <AnimatePresence>
@@ -75,25 +84,7 @@ const PurePreviewMessage = ({
           )}
 
           <div className="flex flex-col gap-4 w-full">
-            {message.experimental_attachments && (
-              <div className="flex flex-row justify-end gap-2">
-                {message.experimental_attachments.map((attachment) => (
-                  <PreviewAttachment
-                    key={attachment.url}
-                    attachment={attachment}
-                  />
-                ))}
-              </div>
-            )}
-
-            {message.reasoning && (
-              <MessageReasoning
-                isLoading={isLoading}
-                reasoning={message.reasoning}
-              />
-            )}
-
-            {(message.content || message.reasoning) && mode === "view" && (
+            {textContent && mode === "view" && (
               <div className="flex flex-row gap-2 items-start">
                 {message.role === "user" && !isReadonly && (
                   <Tooltip>
@@ -118,12 +109,12 @@ const PurePreviewMessage = ({
                       message.role === "user",
                   })}
                 >
-                  <Markdown>{message.content as string}</Markdown>
+                  <Markdown>{textContent as string}</Markdown>
                 </div>
               </div>
             )}
 
-            {message.content && mode === "edit" && (
+            {textContent && mode === "edit" && (
               <div className="flex flex-row gap-2 items-start">
                 <div className="size-8" />
 
@@ -137,14 +128,15 @@ const PurePreviewMessage = ({
               </div>
             )}
 
-            {message.toolInvocations && message.toolInvocations.length > 0 && (
+            {toolParts && toolParts.length > 0 && (
               <div className="flex flex-col gap-4">
-                {message.toolInvocations.map((toolInvocation) => {
-                  const { toolName, toolCallId, state, args } = toolInvocation
+                {toolParts.map((toolPart: any) => {
+                  const toolName = toolPart.type?.replace("tool-", "") || ""
+                  const toolCallId = toolPart.toolCallId || ""
+                  const args = toolPart.input || {}
+                  const result = toolPart.result
 
-                  if (state === "result") {
-                    const { result } = toolInvocation
-
+                  if (result) {
                     return (
                       <div key={toolCallId}>
                         {toolName === "getWeather" ? (
@@ -215,23 +207,14 @@ const PurePreviewMessage = ({
         </div>
       </motion.div>
     </AnimatePresence>
-  )
+  );
 }
 
 export const PreviewMessage = memo(
   PurePreviewMessage,
   (prevProps, nextProps) => {
     if (prevProps.isLoading !== nextProps.isLoading) return false
-    if (prevProps.message.reasoning !== nextProps.message.reasoning)
-      return false
-    if (prevProps.message.content !== nextProps.message.content) return false
-    if (
-      !equal(
-        prevProps.message.toolInvocations,
-        nextProps.message.toolInvocations,
-      )
-    )
-      return false
+    if (!equal(prevProps.message.parts, nextProps.message.parts)) return false
     if (!equal(prevProps.vote, nextProps.vote)) return false
 
     return true

@@ -1,12 +1,12 @@
-import { DataStreamWriter, tool } from "ai"
-import { z } from "zod"
+import { UIMessageStreamWriter, tool } from "ai"
+import { z } from 'zod/v3';
 import { getDocumentById, saveDocument } from "@/lib/db/queries"
 import { documentHandlersByBlockKind } from "@/lib/blocks/server"
 import { Session } from "@/app/(auth)/server-auth"
 
 interface UpdateDocumentProps {
   session: Session
-  dataStream: DataStreamWriter
+  dataStream: UIMessageStreamWriter
   selectedModelId?: string
 }
 
@@ -17,7 +17,7 @@ export const updateDocument = ({
 }: UpdateDocumentProps) =>
   tool({
     description: "Update a document with the given description.",
-    parameters: z.object({
+    inputSchema: z.object({
       id: z.string().describe("The ID of the document to update"),
       description: z
         .string()
@@ -32,9 +32,9 @@ export const updateDocument = ({
         }
       }
 
-      dataStream.writeData({
-        type: "clear",
-        content: document.title,
+      dataStream.write({
+        'type': 'data-clear',
+        'data': document.title
       })
 
       const documentHandler = documentHandlersByBlockKind.find(
@@ -54,7 +54,10 @@ export const updateDocument = ({
         selectedModelId,
       })
 
-      dataStream.writeData({ type: "finish", content: "" })
+      dataStream.write({
+        'type': 'data-finish',
+        'data': ""
+      })
 
       return {
         id,

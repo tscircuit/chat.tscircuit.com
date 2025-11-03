@@ -1,9 +1,9 @@
 import type {
   CoreAssistantMessage,
   CoreToolMessage,
-  Message,
+  UIMessage,
   TextStreamPart,
-  ToolInvocation,
+  UIToolInvocation,
   ToolSet,
 } from "ai"
 import { type ClassValue, clsx } from "clsx"
@@ -49,86 +49,40 @@ export function generateUUID(): string {
     const r = (Math.random() * 16) | 0
     const v = c === "x" ? r : (r & 0x3) | 0x8
     return v.toString(16)
-  })
-}
-
-function addToolMessageToChat({
-  toolMessage,
-  messages,
-}: {
-  toolMessage: CoreToolMessage
-  messages: Array<Message>
-}): Array<Message> {
-  return messages.map((message) => {
-    if (message.toolInvocations) {
-      return {
-        ...message,
-        toolInvocations: message.toolInvocations.map((toolInvocation) => {
-          const toolResult = toolMessage.content.find(
-            (tool) => tool.toolCallId === toolInvocation.toolCallId,
-          )
-
-          if (toolResult) {
-            return {
-              ...toolInvocation,
-              state: "result",
-              result: toolResult.result,
-            }
-          }
-
-          return toolInvocation
-        }),
-      }
-    }
-
-    return message
-  })
+  });
 }
 
 export function convertToUIMessages(
   messages: Array<DBMessage>,
-): Array<Message> {
-  return messages.reduce((chatMessages: Array<Message>, message) => {
-    if (message.role === "tool") {
-      return addToolMessageToChat({
-        toolMessage: message as CoreToolMessage,
-        messages: chatMessages,
-      })
-    }
-
-    let textContent = ""
-    let reasoning: string | undefined = undefined
-    const toolInvocations: Array<ToolInvocation> = []
-
-    if (typeof message.content === "string") {
-      textContent = message.content
+): Array<UIMessage> {
+  return messages.map((message) => {
+    const parts: any[] = []
+    
+    // Convert old content format to new parts array
+    if (typeof message.content === "string" && message.content) {
+      parts.push({ type: "text", text: message.content })
     } else if (Array.isArray(message.content)) {
       for (const content of message.content) {
         if (content.type === "text") {
-          textContent += content.text
+          parts.push({ type: "text", text: content.text })
         } else if (content.type === "tool-call") {
-          toolInvocations.push({
-            state: "call",
+          parts.push({
+            type: `tool-${content.toolName}`,
             toolCallId: content.toolCallId,
-            toolName: content.toolName,
-            args: content.args,
+            input: content.args,
           })
         } else if (content.type === "reasoning") {
-          reasoning = content.reasoning
+          parts.push({ type: "text", text: content.reasoningText })
         }
       }
     }
 
-    chatMessages.push({
+    return {
       id: message.id,
-      role: message.role as Message["role"],
-      content: textContent,
-      reasoning,
-      toolInvocations,
-    })
-
-    return chatMessages
-  }, [])
+      role: message.role as any,
+      parts: parts.length > 0 ? parts : [{ type: "text", text: "" }],
+    } as UIMessage
+  })
 }
 
 type ResponseMessageWithoutId = CoreToolMessage | CoreAssistantMessage
@@ -136,86 +90,28 @@ type ResponseMessage = ResponseMessageWithoutId & { id: string }
 
 export function sanitizeResponseMessages({
   messages,
-  reasoning,
+  reasoningText,
 }: {
   messages: Array<ResponseMessage>
-  reasoning: string | undefined
+  reasoningText: string | undefined
 }) {
-  const toolResultIds: Array<string> = []
-
-  for (const message of messages) {
-    if (message.role === "tool") {
-      for (const content of message.content) {
-        if (content.type === "tool-result") {
-          toolResultIds.push(content.toolCallId)
-        }
-      }
+  // In v5, just filter out empty messages
+  return messages.filter((message) => {
+    if (message.role === "assistant" && Array.isArray(message.content)) {
+      return message.content.length > 0
     }
-  }
-
-  const messagesBySanitizedContent = messages.map((message) => {
-    if (message.role !== "assistant") return message
-
-    if (typeof message.content === "string") return message
-
-    const sanitizedContent = message.content.filter((content) =>
-      content.type === "tool-call"
-        ? toolResultIds.includes(content.toolCallId)
-        : content.type === "text"
-          ? content.text.length > 0
-          : true,
-    )
-
-    if (reasoning) {
-      // @ts-expect-error: reasoning message parts in sdk is wip
-      sanitizedContent.push({ type: "reasoning", reasoning })
-    }
-
-    return {
-      ...message,
-      content: sanitizedContent,
-    }
+    return true
   })
-
-  return messagesBySanitizedContent.filter(
-    (message) => message.content.length > 0,
-  )
 }
 
-export function sanitizeUIMessages(messages: Array<Message>): Array<Message> {
-  const messagesBySanitizedToolInvocations = messages.map((message) => {
-    if (message.role !== "assistant") return message
-
-    if (!message.toolInvocations) return message
-
-    const toolResultIds: Array<string> = []
-
-    for (const toolInvocation of message.toolInvocations) {
-      if (toolInvocation.state === "result") {
-        toolResultIds.push(toolInvocation.toolCallId)
-      }
-    }
-
-    const sanitizedToolInvocations = message.toolInvocations.filter(
-      (toolInvocation) =>
-        toolInvocation.state === "result" ||
-        toolResultIds.includes(toolInvocation.toolCallId),
-    )
-
-    return {
-      ...message,
-      toolInvocations: sanitizedToolInvocations,
-    }
+export function sanitizeUIMessages(messages: Array<UIMessage>): Array<UIMessage> {
+  // In v5, filter out messages with empty parts
+  return messages.filter((message) => {
+    return message.parts && message.parts.length > 0
   })
-
-  return messagesBySanitizedToolInvocations.filter(
-    (message) =>
-      message.content.length > 0 ||
-      (message.toolInvocations && message.toolInvocations.length > 0),
-  )
 }
 
-export function getMostRecentUserMessage(messages: Array<Message>) {
+export function getMostRecentUserMessage(messages: Array<UIMessage>) {
   const userMessages = messages.filter((message) => message.role === "user")
   return userMessages.at(-1)
 }

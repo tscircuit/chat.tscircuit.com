@@ -3,7 +3,7 @@ import { imageDocumentHandler } from "@/blocks/image/server"
 import { sheetDocumentHandler } from "@/blocks/sheet/server"
 import { textDocumentHandler } from "@/blocks/text/server"
 import { BlockKind } from "@/components/block"
-import { DataStreamWriter } from "ai"
+import { UIMessageStreamWriter } from "ai"
 import { Document } from "../db/schema"
 import { saveDocument } from "../db/queries"
 import { Session } from "@/app/(auth)/server-auth"
@@ -19,7 +19,7 @@ export interface SaveDocumentProps {
 export interface CreateDocumentCallbackProps {
   id: string
   title: string
-  dataStream: DataStreamWriter
+  dataStream: UIMessageStreamWriter
   session: Session
   selectedModelId?: string
 }
@@ -27,7 +27,7 @@ export interface CreateDocumentCallbackProps {
 export interface UpdateDocumentCallbackProps {
   document: Document
   description: string
-  dataStream: DataStreamWriter
+  dataStream: UIMessageStreamWriter
   session: Session
   selectedModelId?: string
 }
