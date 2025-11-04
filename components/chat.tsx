@@ -16,6 +16,22 @@ import type { VisibilityType } from "./visibility-selector"
 import { useBlockSelector } from "@/hooks/use-block"
 import { toast } from "sonner"
 
+// Convert UIMessage (with parts) to Message (with content) for useChat
+function uiMessagesToMessages(uiMessages: UIMessage[]): any[] {
+  return uiMessages.map((msg) => {
+    let content = ""
+    if (msg.parts && msg.parts.length > 0) {
+      const textParts = msg.parts.filter((p: any) => p.type === "text")
+      content = textParts.map((p: any) => p.text).join("\n")
+    }
+    return {
+      id: msg.id,
+      role: msg.role,
+      content,
+    }
+  })
+}
+
 export function Chat({
   id,
   initialMessages,
@@ -46,7 +62,7 @@ export function Chat({
   } = useChat({
     id,
     body: { id, selectedChatModel: modelId },
-    initialMessages: initialMessages as any,
+    initialMessages: uiMessagesToMessages(initialMessages),
     experimental_throttle: 100,
     generateId: generateUUID,
 
@@ -85,8 +101,12 @@ export function Chat({
           chatId={id}
           isLoading={isLoading}
           votes={votes}
-          messages={messages as any}
-          setMessages={setMessages as any}
+          messages={messages as unknown as UIMessage[]}
+          setMessages={
+            setMessages as unknown as (
+              messages: UIMessage[] | ((messages: UIMessage[]) => UIMessage[]),
+            ) => void
+          }
           reload={reload}
           isReadonly={isReadonly}
           isBlockVisible={isBlockVisible}
@@ -103,8 +123,14 @@ export function Chat({
               stop={stop}
               attachments={attachments}
               setAttachments={setAttachments}
-              messages={messages as any}
-              setMessages={setMessages as any}
+              messages={messages as unknown as UIMessage[]}
+              setMessages={
+                setMessages as unknown as (
+                  messages:
+                    | UIMessage[]
+                    | ((messages: UIMessage[]) => UIMessage[]),
+                ) => void
+              }
               append={append}
             />
           )}
@@ -121,8 +147,12 @@ export function Chat({
         attachments={attachments}
         setAttachments={setAttachments}
         append={append}
-        messages={messages as any}
-        setMessages={setMessages as any}
+        messages={messages as unknown as UIMessage[]}
+        setMessages={
+          setMessages as unknown as (
+            messages: UIMessage[] | ((messages: UIMessage[]) => UIMessage[]),
+          ) => void
+        }
         reload={reload}
         votes={votes}
         isReadonly={isReadonly}
