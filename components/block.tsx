@@ -1,4 +1,9 @@
-import type { Attachment, ChatRequestOptions, CreateMessage, Message } from "ai"
+import type {
+  Attachment,
+  ChatRequestOptions,
+  CreateUIMessage,
+  UIMessage,
+} from "ai"
 import { formatDistance } from "date-fns"
 import { AnimatePresence, motion } from "framer-motion"
 import {
@@ -69,11 +74,11 @@ function PureBlock({
   stop: () => void
   attachments: Array<Attachment>
   setAttachments: Dispatch<SetStateAction<Array<Attachment>>>
-  messages: Array<Message>
-  setMessages: Dispatch<SetStateAction<Array<Message>>>
+  messages: Array<UIMessage>
+  setMessages: Dispatch<SetStateAction<Array<UIMessage>>>
   votes: Array<Vote> | undefined
   append: (
-    message: Message | CreateMessage,
+    message: UIMessage | CreateUIMessage,
     chatRequestOptions?: ChatRequestOptions,
   ) => Promise<string | null | undefined>
   handleSubmit: (

@@ -2,7 +2,7 @@ import { myProvider } from "@/lib/ai/models"
 import { updateDocumentPrompt } from "@/lib/ai/prompts/prompts"
 import { createDocumentHandler } from "@/lib/blocks/server"
 import { streamObject } from "ai"
-import { z } from "zod"
+import { z } from "zod/v3"
 
 /**
  * @deprecated
@@ -29,9 +29,15 @@ export const sheetDocumentHandler = createDocumentHandler<"sheet">({
         const { csv } = object
 
         if (csv) {
-          dataStream.writeData({
-            type: "sheet-delta",
-            content: csv,
+          dataStream.write({
+            type: "data",
+
+            value: [
+              {
+                type: "sheet-delta",
+                content: csv,
+              },
+            ],
           })
 
           draftContent = csv
@@ -39,9 +45,15 @@ export const sheetDocumentHandler = createDocumentHandler<"sheet">({
       }
     }
 
-    dataStream.writeData({
-      type: "sheet-delta",
-      content: draftContent,
+    dataStream.write({
+      type: "data",
+
+      value: [
+        {
+          type: "sheet-delta",
+          content: draftContent,
+        },
+      ],
     })
 
     return draftContent
@@ -66,9 +78,15 @@ export const sheetDocumentHandler = createDocumentHandler<"sheet">({
         const { csv } = object
 
         if (csv) {
-          dataStream.writeData({
-            type: "sheet-delta",
-            content: csv,
+          dataStream.write({
+            type: "data",
+
+            value: [
+              {
+                type: "sheet-delta",
+                content: csv,
+              },
+            ],
           })
 
           draftContent = csv

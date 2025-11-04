@@ -1,4 +1,4 @@
-import type { ChatRequestOptions, Message } from "ai"
+import type { ChatRequestOptions, UIMessage } from "ai"
 import { PreviewMessage, ThinkingMessage } from "./message"
 import { useScrollToBottom } from "./use-scroll-to-bottom"
 import { Overview } from "./overview"
@@ -10,9 +10,9 @@ interface MessagesProps {
   chatId: string
   isLoading: boolean
   votes: Array<Vote> | undefined
-  messages: Array<Message>
+  messages: Array<UIMessage>
   setMessages: (
-    messages: Message[] | ((messages: Message[]) => Message[]),
+    messages: UIMessage[] | ((messages: UIMessage[]) => UIMessage[]),
   ) => void
   reload: (
     chatRequestOptions?: ChatRequestOptions,
