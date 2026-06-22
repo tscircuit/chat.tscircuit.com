@@ -7,7 +7,10 @@ import { memo, useMemo, useState } from "react"
 
 import type { Vote } from "@/lib/db/schema"
 
+import { cn } from "@/lib/utils"
+import equal from "fast-deep-equal"
 import { DocumentToolCall, DocumentToolResult } from "./document"
+import { DocumentPreview } from "./document-preview"
 import {
   ChevronDownIcon,
   LoaderIcon,
@@ -16,15 +19,12 @@ import {
 } from "./icons"
 import { Markdown } from "./markdown"
 import { MessageActions } from "./message-actions"
+import { MessageEditor } from "./message-editor"
+import { MessageReasoning } from "./message-reasoning"
 import { PreviewAttachment } from "./preview-attachment"
-import { Weather } from "./weather"
-import equal from "fast-deep-equal"
-import { cn } from "@/lib/utils"
 import { Button } from "./ui/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip"
-import { MessageEditor } from "./message-editor"
-import { DocumentPreview } from "./document-preview"
-import { MessageReasoning } from "./message-reasoning"
+import { Weather } from "./weather"
 
 const PurePreviewMessage = ({
   chatId,
@@ -113,7 +113,7 @@ const PurePreviewMessage = ({
                 )}
 
                 <div
-                  className={cn("flex flex-col gap-4", {
+                  className={cn("flex min-w-0 max-w-full flex-col gap-4", {
                     "bg-primary text-primary-foreground px-3 py-2 rounded-xl":
                       message.role === "user",
                   })}

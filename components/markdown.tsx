@@ -21,7 +21,12 @@ const components: Partial<Components> = {
 }
 
 const NonMemoizedMarkdown = ({ children }: { children: string }) => (
-  <Streamdown components={components}>{children}</Streamdown>
+  <Streamdown
+    className="markdown-content min-w-0 max-w-full"
+    components={components}
+  >
+    {children}
+  </Streamdown>
 )
 
 export const Markdown = memo(
