@@ -239,37 +239,34 @@
   display: none;
 }
 
-div.hidden.overflow-x-auto.dark\:block.\[\&\>pre\]\:bg-transparent\!.my-4.h-auto.rounded-lg.border.p-4.language-tsx {
-  padding: 0 !important;
+.markdown-content {
+  @apply w-full min-w-0 max-w-full;
 }
-div.hidden.overflow-x-auto.dark\:block.\[\&\>pre\]\:bg-transparent\!.my-4.h-auto.rounded-lg.border.p-4.language-tsx
-  > pre {
-  padding: 1rem;
+
+.markdown-content [class*="language-"] {
+  @apply max-w-full overflow-x-auto;
 }
-div.hidden.overflow-x-auto.dark\:block.\[\&\>pre\]\:bg-transparent\!.my-4.h-auto.rounded-lg.border.p-4.language-tsx {
-  max-width: 85vw;
-  background-color: #24292e;
+
+.markdown-content [class*="language-"] > pre {
+  @apply m-0 p-0;
 }
-div.overflow-x-auto.dark\:hidden.\[\&\>pre\]\:bg-transparent\!.my-4.h-auto.rounded-lg.border.p-4.language-tsx {
-  max-width: 85vw;
-  background-color: #fff;
+
+.markdown-content [class*="language-"] pre code {
+  white-space: pre;
 }
-div.overflow-x-auto.dark\:hidden.\[\&\>pre\]\:bg-transparent\!.my-4.h-auto.rounded-lg.border.p-4.language-tsx
-  > pre {
-  padding: 0 !important;
-}
-.language-tsx::-webkit-scrollbar {
+
+.markdown-content [class*="language-"]::-webkit-scrollbar {
   width: 6px;
   height: 2px;
   background-color: transparent;
 }
 
-.language-tsx::-webkit-scrollbar-thumb {
+.markdown-content [class*="language-"]::-webkit-scrollbar-thumb {
   background-color: rgba(215, 215, 215, 0.564);
   border-radius: 8px;
   transition: background-color 0.2s;
 }
 
-.language-tsx::-webkit-scrollbar-thumb:hover {
+.markdown-content [class*="language-"]::-webkit-scrollbar-thumb:hover {
   background-color: rgba(193, 193, 193, 0.455);
 }
