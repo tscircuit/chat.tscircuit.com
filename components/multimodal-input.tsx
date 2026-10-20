@@ -26,6 +26,7 @@ import { SuggestedActions } from "./suggested-actions"
 import equal from "fast-deep-equal"
 import TscircuitPackageSelector from "./tscircuit-package-selector"
 import { loadTscircuitPackageAsAttachment } from "@/lib/tscircuit/load-tscircuit-package-as-attachement"
+import { extractPastedImageFiles } from "@/lib/extract-pasted-image-files"
 import { CheckCheckIcon, Loader2 } from "lucide-react"
 
 function PureMultimodalInput({
@@ -191,10 +192,8 @@ function PureMultimodalInput({
     }
   }
 
-  const handleFileChange = useCallback(
-    async (event: ChangeEvent<HTMLInputElement>) => {
-      const files = Array.from(event.target.files || [])
-
+  const uploadFiles = useCallback(
+    async (files: File[]) => {
       setUploadQueue(files.map((file) => file.name))
 
       try {
@@ -215,6 +214,25 @@ function PureMultimodalInput({
       }
     },
     [setAttachments],
+  )
+
+  const handleFileChange = useCallback(
+    async (event: ChangeEvent<HTMLInputElement>) => {
+      const files = Array.from(event.target.files || [])
+      await uploadFiles(files)
+    },
+    [uploadFiles],
+  )
+
+  const handlePaste = useCallback(
+    async (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
+      const imageFiles = extractPastedImageFiles(event.clipboardData)
+      if (imageFiles.length === 0) return
+
+      event.preventDefault()
+      await uploadFiles(imageFiles)
+    },
+    [uploadFiles],
   )
 
   const handleKeyDown = useCallback(
@@ -386,6 +404,7 @@ function PureMultimodalInput({
         name="input"
         value={input}
         onChange={handleInput}
+        onPaste={handlePaste}
         className={cx(
           "min-h-[24px] max-h-[calc(75dvh)] overflow-hidden resize-none rounded-2xl !text-base bg-muted pb-10 dark:border-zinc-700",
           className,
