@@ -62,6 +62,8 @@ export const codeBlock = new Block<"code", Metadata>({
                 "entrypoint.tsx": `import Board from "./board.tsx"\ncircuit.add(<Board />)`,
               }}
               entrypoint="entrypoint.tsx"
+              mainComponentPath="board.tsx"
+              code={metadata.circuitPreview}
             />
           </BottomContentDrawer>
         )}
