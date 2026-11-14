@@ -153,7 +153,7 @@ are optional.
 - \`capacitor /\` - \`capacitance\`
 - \`inductor /\` - \`inductance\`
 - \`led /\` - \`color\`
-- \`diode /\` - \`variant\` (standard/schottky/zener/avalanche/photo/tvs)
+- \`diode /\` - \`variant\` (standard/schottky/zener/avalanche/photo/tvs). Common footprint strings include "0402", "0603", "0805", "sod123" and "sod323".
 - \`trace /\` - \`from\`, \`to\`
 - \`transistor /\` - \`type\` (npn/pnp/nmos/pmos)
 - \`mosfet /\` - \`channelType\` (n/p), \`mosfetMode\` (enhancement/depletion)
@@ -181,6 +181,7 @@ are optional.
 - "0402", "0603", "0805", "1206", "1210"
 - "dip", "dip8", "dip16", "axial", "soic8", "bga64", "tssop8", "stampboard", "stampreceiver", "hc49", "to92", "to220", "ssop", "qfp16", "qfn16", "sot23", "sot23_5", "sot223", "pinrow2", "pinrow6"
 - You can generally alter footprints by changing numbers or adding parameters e.g. "soic8_w4mm" creates a 4mm width soic, "pinrow8_p1mm" creates an 8 pin pinrow with 1mm pitch
+- Always choose a validated @tscircuit/footprinter string. Do not infer footprint IDs from human descriptions: "smd-diode" is NOT a valid footprint, and KiCad library names such as "D_SOD-123" are not tscircuit footprint strings. Use "sod123", "sod323" or an appropriate actual package only when it matches the part. Verify pad count, dimensions and pin mapping before finalizing.
 - For batteries, just use "pinrow2"
 
 ## Important Notes
@@ -226,6 +227,8 @@ ${currentContent}
 `
     : type === "code"
       ? `\
+${codePrompt}
+
 Improve the following code snippet based on the given prompt.
 
 ${currentContent}
